@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Aba::VERSION
   spec.authors       = ["Andrey Bazhutkin"]
   spec.email         = ["andrey.bazhutkin@gmail.com"]
-  spec.summary       = ["ABA File Generator"]
-  spec.description   = ["ABA (Australian Bankers Association) File Generator"]
+  spec.summary       = "ABA File Generator"
+  spec.description   = "ABA (Australian Bankers Association) File Generator"
   spec.homepage      = "https://github.com/andrba/aba"
   spec.license       = "MIT"
 
