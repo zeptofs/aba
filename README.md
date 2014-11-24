@@ -12,8 +12,8 @@ aba = Aba.new(bsb: "123-345", financial_institution: "WPC", user_name: "John Doe
 
 # Add transactions
 transactions.each do |t|
-	aba.transactions << Aba::Transaction.new(
-		:bsb => "342-342", 
+  aba.transactions << Aba::Transaction.new(
+    :bsb => "342-342", 
     :account_number => "3244654", 
     :amount => amount, 
     :account_name => "John Doe", 
@@ -23,7 +23,7 @@ transactions.each do |t|
     :trace_bsb => "453-543", 
     :trace_account_number => "45656733", 
     :name_of_remitter => "Remitter"
-	)
+  )
 end
 
 puts aba.to_s
