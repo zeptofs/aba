@@ -8,7 +8,16 @@ class Aba
 
     validates_presence_of :bsb, :account_number, :amount, :account_name, :payment_id, :transaction_code,
                           :lodgement_reference, :trace_bsb, :trace_account_number, :name_of_remitter
+    
     validates_bsb :bsb, :trace_bsb
+
+    validates_max_length :account_number,         9
+    validates_max_length :indicator,              1
+    validates_max_length :transaction_code,       2
+    validates_max_length :account_name,           32
+    validates_max_length :lodgement_reference,    18
+    validates_max_length :trace_account_number,   9
+    validates_max_length :name_of_remitter,       16
 
     def initialize(attrs = {})
       attrs.each do |key, value|
@@ -24,7 +33,7 @@ class Aba
       output += bsb
 
       # Account number
-      output += account_number.to_s.ljust(9, " ")
+      output += account_number.to_s.rjust(9, " ")
 
       # Withholding Tax Indicator
       # "N" – for new or varied Bank/State/Branch number or name details, otherwise blank filled.
@@ -55,7 +64,7 @@ class Aba
       output += trace_bsb
 
       # Trace Account Number 
-      output += trace_account_number.to_s.ljust(9, " ")
+      output += trace_account_number.to_s.rjust(9, " ")
 
       # Name of Remitter Produced on the recipient’s Account Statement
       output += name_of_remitter.ljust(16, " ")

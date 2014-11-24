@@ -1,34 +1,59 @@
 class Aba
   module Validations
+    attr_accessor :errors
+
     def self.included(base)
+      base.instance_eval do
+        @_validations = {}
+      end
+
       base.send :extend, ClassMethods
     end
 
+    # Run all validations
     def valid?
       self.errors = []
 
-      self.class.validate_presence_attrs.each do |attribute|
+      self.class.instance_variable_get(:@_validations).each do |attribute, validations|
         value = send(attribute)
-        self.errors << "#{attribute} is empty" if value.nil? || value.to_s.empty?
+
+        validations.each do |type, param|
+          case type
+          when :presence
+            self.errors << "#{attribute} is empty" if value.nil? || value.to_s.empty?
+          when :bsb
+            self.errors << "#{attribute} format is incorrect" unless value =~ /^\d{3}-\d{3}$/
+          when :max_length
+            self.errors << "#{attribute} length must not exceed #{param} characters" if value.to_s.length > param
+          end
+        end
       end
 
-      self.class.validates_bsb.each do |attribute|
-        value = send(attribute)
-        self.errors << "#{attribute} must be of a correct bsb format (XXX-XXX)" if value =~ /^\d{3}-\d{3}$/
-      end
-
-      return self.errors.empty?
+      self.errors.empty?
     end
    
     module ClassMethods
-      attr_reader :validate_presence_attrs, :validate_bsb_attrs, :errors
-
       def validates_presence_of(*attributes)
-        @validate_presence_attrs = attributes
+        attributes.each do |a| 
+          add_validation_attribute(a, :presence)
+        end
       end
 
       def validates_bsb(*attributes)
-        @validate_bsb_attrs = attributes
+        attributes.each do |a| 
+          add_validation_attribute(a, :bsb)
+        end
+      end
+
+      def validates_max_length(attribute, length)
+        add_validation_attribute(attribute, :max_length, length)
+      end
+
+      private
+
+      def add_validation_attribute(attribute, type, param = true)
+        @_validations[attribute] = {} unless @_validations[attribute]
+        @_validations[attribute][type] = param
       end
     end
   end

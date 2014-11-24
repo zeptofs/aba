@@ -6,29 +6,26 @@ class Aba
   include Aba::Validations
 
   attr_accessor :bsb, :account_number, :financial_institution, :user_name, :user_id,
-                :description, :process_at, :name_of_remitter
+                :description, :process_at, :name_of_remitter, :transactions
 
-  attr_reader :errors
-
-  validates_presence_of :financial_institution, :user_name, :user_id, :description, :process_at
+  validates_presence_of :bsb, :financial_institution, :user_name, :user_id, :description, :process_at
+  
   validates_bsb :bsb
 
-  def initialize
-    @transactions = []
-    @errors = []
+  validates_max_length :account_number,         9
+  validates_max_length :financial_institution,  3
+  validates_max_length :user_name,              26
+  validates_max_length :user_id,                6
+  validates_max_length :description,            12
+
+  def initialize(attrs = {})
+    attrs.each do |key, value|
+      send("#{key}=", value)
+    end
+
+    self.transactions = []
 
     yield self if block_given?
-  end
-
-  # Create a transaction record
-  def transaction
-    transaction = Transaction.new(trace_bsb: self.bsb, trace_account_number: self.account_number, name_of_remitter: self.name_of_remitter)
-    yield transaction
-    @transactions << transaction
-  end
-
-  def valid?
-    super.valid? && @transactions.inject(true) { |res, t| res &&= t.valid? }
   end
 
   def to_s
@@ -49,10 +46,10 @@ class Aba
     output = "0"
 
     # Bank/State/Branch number of the funds account with a hyphen in the 4th character position. e.g. 013-999. 
-    output += self.bsb.ljust(7, " ")
+    output += self.bsb
 
     # Funds account number.
-    output += self.account_number.ljust(9, " ")
+    output += self.account_number.to_s.ljust(9, " ")
 
     # Reserved
     output += " "
@@ -61,19 +58,19 @@ class Aba
     output += "01"
 
     # Must contain the bank mnemonic that is associated with the BSB of the funds account. e.g. ‘ANZ’. 
-    output += self.financial_institution
+    output += self.financial_institution[0..2].to_s
 
     # Reserved 
     output += " " * 7
 
     # Name of User supplying File as advised by User's Financial Institution
-    output += self.user_name.ljust(26, " ")
+    output += self.user_name.to_s.ljust(26, " ")
 
     # Direct Entry User ID. 
-    output += self.user_id.rjust(6, "0")
+    output += self.user_id.to_s.rjust(6, "0")
 
     # Description of payments in the file (e.g. Payroll, Creditors etc.). 
-    output += self.description.ljust(12, " ")
+    output += self.description.to_s.ljust(12, " ")
 
     # Date and time on which the payment is to be processed.
     output += self.process_at.strftime("%d%m%y%H%M")
