@@ -7,22 +7,30 @@ The purpose of this gem is to generate an ABA (Australian Banking Association) f
 ```ruby
 require 'aba'
 
-aba = Aba.new(bsb: "123-345", financial_institution: "WPC", user_name: "John Doe", 
-      user_id: "466364", description: "Payroll", process_at: Time.now)
+aba = Aba.new(
+  bsb: "123-345", 
+  financial_institution: "WPC", 
+  user_name: "John Doe", 
+  user_id: "466364", 
+  description: "Payroll", 
+  process_at: Time.now
+)
 
 # Add transactions
 transactions.each do |t|
-  aba.transactions << Aba::Transaction.new(
-    :bsb => "342-342", 
-    :account_number => "3244654", 
-    :amount => amount, 
-    :account_name => "John Doe", 
-    :payment_id => "P2345543", 
-    :transaction_code => 53,
-    :lodgement_reference => "R435564", 
-    :trace_bsb => "453-543", 
-    :trace_account_number => "45656733", 
-    :name_of_remitter => "Remitter"
+  aba.add_transaction(
+    Aba::Transaction.new(
+      :bsb => "342-342", 
+      :account_number => "3244654", 
+      :amount => amount, 
+      :account_name => "John Doe", 
+      :payment_id => "P2345543", 
+      :transaction_code => 53,
+      :lodgement_reference => "R435564", 
+      :trace_bsb => "453-543", 
+      :trace_account_number => "45656733", 
+      :name_of_remitter => "Remitter"
+    )
   )
 end
 

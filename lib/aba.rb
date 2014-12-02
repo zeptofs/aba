@@ -6,7 +6,7 @@ class Aba
   include Aba::Validations
 
   attr_accessor :bsb, :account_number, :financial_institution, :user_name, :user_id,
-                :description, :process_at, :name_of_remitter, :transactions
+                :description, :process_at, :name_of_remitter
 
   validates_presence_of :bsb, :financial_institution, :user_name, :user_id, :description, :process_at
   
@@ -23,7 +23,7 @@ class Aba
       send("#{key}=", value)
     end
 
-    self.transactions = []
+    @transactions = []
 
     yield self if block_given?
   end
@@ -37,6 +37,10 @@ class Aba
 
     # Batch control record
     output += "\r\n#{batch_control_record}"
+  end
+
+  def add_transaction(transaction)
+    @transactions << transaction
   end
 
   private

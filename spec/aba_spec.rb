@@ -6,17 +6,19 @@ describe Aba do
       user_id: "466364", description: "Payroll", process_at: Time.new(2014, 12, 01, 10, 22, 0)) 
 
     [30, -20].each do |amount|
-      aba.transactions << Aba::Transaction.new(
-        :bsb => "342-342", 
-        :account_number => "3244654", 
-        :amount => amount, 
-        :account_name => "John Doe", 
-        :payment_id => "P2345543", 
-        :transaction_code => 53,
-        :lodgement_reference => "R435564", 
-        :trace_bsb => "453-543", 
-        :trace_account_number => "45656733", 
-        :name_of_remitter => "Remitter"
+      aba.add_transaction(
+        Aba::Transaction.new(
+          :bsb => "342-342", 
+          :account_number => "3244654", 
+          :amount => amount, 
+          :account_name => "John Doe", 
+          :payment_id => "P2345543", 
+          :transaction_code => 53,
+          :lodgement_reference => "R435564", 
+          :trace_bsb => "453-543", 
+          :trace_account_number => "45656733", 
+          :name_of_remitter => "Remitter"
+        )
       )
     end
 
