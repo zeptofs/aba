@@ -17,7 +17,7 @@ aba = Aba.new(
 )
 
 # Add transactions
-transactions.each do |t|
+transactions.each do
   aba.add_transaction(
     Aba::Transaction.new(
       :bsb => "342-342", 
