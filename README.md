@@ -22,7 +22,7 @@ aba = Aba.new(
     Aba::Transaction.new(
       :bsb => "342-342", 
       :account_number => "3244654", 
-      :amount => amount, 
+      :amount => 100.00, 
       :account_name => "John Doe", 
       :payment_id => "P2345543", 
       :transaction_code => 53,
