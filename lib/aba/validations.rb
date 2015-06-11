@@ -30,6 +30,8 @@ class Aba
             self.errors << "#{attribute} length must not exceed #{param} characters" if value.to_s.length > param
           when :length
             self.errors << "#{attribute} length must be exactly #{param} characters" if value.to_s.length != param
+          when :integer
+            self.errors << "#{attribute} must be an integer" unless value.to_s =~ /\A[+-]?\d+\Z/
           end
         end
       end
@@ -55,6 +57,10 @@ class Aba
 
       def validates_length(attribute, length)
         add_validation_attribute(attribute, :length, length)
+      end
+
+      def validates_integer(attribute)
+        add_validation_attribute(attribute, :integer)
       end
 
       private

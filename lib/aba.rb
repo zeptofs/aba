@@ -7,8 +7,6 @@ class Aba
 
   attr_accessor :bsb, :financial_institution, :user_name, :user_id, :description, :process_at
 
-  validates_presence_of :financial_institution, :user_name, :user_id, :description, :process_at
-  
   validates_bsb :bsb, allow_blank: true
 
   validates_max_length :user_name,              26
@@ -103,15 +101,6 @@ class Aba
   end
 
   def batch_control_record
-    # Record type
-    output = "7"
-
-    # BSB Format Filler
-    output += "999-999"
-
-    # Reserved
-    output += " " * 12
-
     net_total_amount    = 0
     credit_total_amount = 0
     debit_total_amount  = 0
@@ -122,22 +111,49 @@ class Aba
       debit_total_amount += t.amount if t.amount < 0
     end
 
-    # Must equal the difference between File Credit & File Debit Total Amounts. Show in cents without punctuation
+    # Record type
+    # Max: 1
+    # Char position: 1
+    output = "7"
+
+    # BSB Format Filler
+    # Max: 7
+    # Char position: 2-8
+    output += "999-999"
+
+    # Reserved
+    # Max: 12
+    # Char position: 9-20
+    output += " " * 12
+
+    # Net total
+    # Max: 10
+    # Char position: 21-30
     output += net_total_amount.abs.to_s.rjust(10, "0")
 
-    # Batch Credit Total Amount 
+    # Credit Total Amount 
+    # Max: 10
+    # Char position: 31-40
     output += credit_total_amount.abs.to_s.rjust(10, "0")
 
-    # Batch Debit Total Amount 
+    # Debit Total Amount 
+    # Max: 10
+    # Char position: 41-50
     output += debit_total_amount.abs.to_s.rjust(10, "0")
 
     # Reserved
+    # Max: 24
+    # Char position: 51-74
     output += " " * 24
 
-    # Batch Total Item Count 
+    # Total Item Count 
+    # Max: 6
+    # Char position: 75-80
     output += @transactions.size.to_s.rjust(6, "0")
 
     # Reserved
+    # Max: 40
+    # Char position: 81-120
     output += " " * 40
   end
 end

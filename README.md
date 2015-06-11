@@ -2,40 +2,42 @@
 
 # Aba
 
-The purpose of this gem is to generate an ABA (Australian Banking Association) file. It is a format used by banks to allow for batch transaction.
+Generates ABA (Australian Banking Association) file format output
 
 ## Usage
 
 ```ruby
 require 'aba'
 
+# Initialise ABA
 aba = Aba.new(
-  bsb: "123-345", # Not required by NAB
+  bsb: "123-345", # Optional (Not required by NAB)
   financial_institution: "WPC", 
-  user_name: "John Doe", 
+  user_name: "John Doe",
   user_id: "466364", 
   description: "Payroll", 
-  process_at: Time.now
+  process_at: Time.now.strftime("%d%m%y")
 )
 
 # Add transactions
 10.times do
   aba.add_transaction(
     Aba::Transaction.new(
-      :bsb => "342-342", 
-      :account_number => "3244654", 
-      :amount => 100.00, 
-      :account_name => "John Doe", 
-      :transaction_code => 53,
-      :lodgement_reference => "R435564", 
-      :trace_bsb => "453-543", 
-      :trace_account_number => "45656733", 
-      :name_of_remitter => "Remitter"
+      bsb: "342-342", 
+      account_number: "3244654", 
+      amount: 10000, # Amount in cents
+      account_name: "John Doe", 
+      transaction_code: 53,
+      lodgement_reference: "R435564", 
+      trace_bsb: "453-543", 
+      trace_account_number: "45656733", 
+      name_of_remitter: "Remitter"
     )
   )
 end
 
-puts aba.to_s
+puts aba.to_s # View output
+File.write("/Users/me/dd_#{Time.now.to_i}.aba", aba.to_s) # or write output to file
 ```
 
 ## Installation

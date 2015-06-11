@@ -30,7 +30,7 @@ describe Aba::Transaction do
     it "should not be valid" do
       transaction_params.delete(:bsb)
       expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["bsb is empty", "bsb format is incorrect"]
+      expect(subject.errors).to eq ["bsb format is incorrect"]
     end
   end
 end
