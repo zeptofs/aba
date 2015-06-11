@@ -1,3 +1,5 @@
+[ ![Codeship Status for krakendevelopments/aba](https://codeship.com/projects/982382f0-f22b-0132-a80d-0acc257ded9c/status?branch=master)](https://codeship.com/projects/85083)
+
 # Aba
 
 The purpose of this gem is to generate an ABA (Australian Banking Association) file. It is a format used by banks to allow for batch transaction.
@@ -8,7 +10,7 @@ The purpose of this gem is to generate an ABA (Australian Banking Association) f
 require 'aba'
 
 aba = Aba.new(
-  bsb: "123-345", 
+  bsb: "123-345", # Not required by NAB
   financial_institution: "WPC", 
   user_name: "John Doe", 
   user_id: "466364", 
