@@ -6,7 +6,6 @@ describe Aba::Transaction do
     :transaction_code => 53,
     :amount => 50050,
     :account_name => "John Doe",
-    :payment_id => "P30234",
     :bsb => "345-453",
     :witholding_amount => 87,
     :indicator => "W",

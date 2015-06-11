@@ -24,7 +24,6 @@ aba = Aba.new(
       :account_number => "3244654", 
       :amount => 100.00, 
       :account_name => "John Doe", 
-      :payment_id => "P2345543", 
       :transaction_code => 53,
       :lodgement_reference => "R435564", 
       :trace_bsb => "453-543", 

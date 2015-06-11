@@ -1,4 +1,5 @@
 class Aba
+  require 'pry'
   module Validations
     attr_accessor :errors
 
@@ -22,9 +23,13 @@ class Aba
           when :presence
             self.errors << "#{attribute} is empty" if value.nil? || value.to_s.empty?
           when :bsb
-            self.errors << "#{attribute} format is incorrect" unless value =~ /^\d{3}-\d{3}$/
+            unless((param && value.nil?) || value =~ /^\d{3}-\d{3}$/)
+              self.errors << "#{attribute} format is incorrect"
+            end
           when :max_length
             self.errors << "#{attribute} length must not exceed #{param} characters" if value.to_s.length > param
+          when :length
+            self.errors << "#{attribute} length must be exactly #{param} characters" if value.to_s.length != param
           end
         end
       end
@@ -39,14 +44,17 @@ class Aba
         end
       end
 
-      def validates_bsb(*attributes)
-        attributes.each do |a| 
-          add_validation_attribute(a, :bsb)
-        end
+      def validates_bsb(attribute, options = {})
+        options[:allow_blank] ||= false
+        add_validation_attribute(attribute, :bsb, options[:allow_blank])
       end
 
       def validates_max_length(attribute, length)
         add_validation_attribute(attribute, :max_length, length)
+      end
+
+      def validates_length(attribute, length)
+        add_validation_attribute(attribute, :length, length)
       end
 
       private

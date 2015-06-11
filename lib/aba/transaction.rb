@@ -2,14 +2,15 @@ class Aba
   class Transaction
     include Aba::Validations
 
-    attr_accessor :account_number, :transaction_code, :amount, :account_name, :payment_id, 
+    attr_accessor :account_number, :transaction_code, :amount, :account_name, 
                   :bsb, :trace_bsb, :trace_account_number, :name_of_remitter, :witholding_amount, 
                   :indicator, :lodgement_reference
 
-    validates_presence_of :bsb, :account_number, :amount, :account_name, :payment_id, :transaction_code,
+    validates_presence_of :bsb, :account_number, :amount, :account_name, :transaction_code,
                           :lodgement_reference, :trace_bsb, :trace_account_number, :name_of_remitter
     
-    validates_bsb :bsb, :trace_bsb
+    validates_bsb :bsb
+    validates_bsb :trace_bsb
 
     validates_max_length :account_number,         9
     validates_max_length :indicator,              1

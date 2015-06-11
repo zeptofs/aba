@@ -5,18 +5,18 @@ require "aba/transaction"
 class Aba
   include Aba::Validations
 
-  attr_accessor :bsb, :account_number, :financial_institution, :user_name, :user_id,
-                :description, :process_at, :name_of_remitter
+  attr_accessor :bsb, :financial_institution, :user_name, :user_id, :description, :process_at
 
-  validates_presence_of :bsb, :financial_institution, :user_name, :user_id, :description, :process_at
+  validates_presence_of :financial_institution, :user_name, :user_id, :description, :process_at
   
-  validates_bsb :bsb
+  validates_bsb :bsb, allow_blank: true
 
-  validates_max_length :account_number,         9
-  validates_max_length :financial_institution,  3
   validates_max_length :user_name,              26
   validates_max_length :user_id,                6
   validates_max_length :description,            12
+
+  validates_length     :financial_institution,  3
+  validates_length     :process_at,             6
 
   def initialize(attrs = {})
     attrs.each do |key, value|
@@ -47,40 +47,59 @@ class Aba
 
   def descriptive_record
     # Record type
+    # Max: 1
+    # Char position: 1
     output = "0"
 
-    # Bank/State/Branch number of the funds account with a hyphen in the 4th character position. e.g. 013-999. 
-    output += self.bsb
-
-    # Funds account number.
-    output += self.account_number.to_s.ljust(9, " ")
-
-    # Reserved
-    output += " "
+    # Optional branch number of the funds account with a hyphen in the 4th character position
+    # Char position: 2-18
+    # Max: 17
+    # Blank filled
+    output += self.bsb.nil? ? " " * 17 : self.bsb.to_s.ljust(17)
 
     # Sequence number 
+    # Char position: 19-20
+    # Max: 2
+    # Zero padded
     output += "01"
 
-    # Must contain the bank mnemonic that is associated with the BSB of the funds account. e.g. ‘ANZ’. 
-    output += self.financial_institution[0..2].to_s
+    # Name of user financial instituion
+    # Max: 3
+    # Char position: 21-23
+    output += self.financial_institution.to_s
 
     # Reserved 
+    # Max: 7
+    # Char position: 24-30
     output += " " * 7
 
-    # Name of User supplying File as advised by User's Financial Institution
-    output += self.user_name.to_s.ljust(26, " ")
+    # Name of User supplying File
+    # Char position: 31-56
+    # Max: 26
+    # Blank filled
+    output += self.user_name.to_s.ljust(26)
 
-    # Direct Entry User ID. 
+    # Direct Entry User ID
+    # Char position: 57-62
+    # Max: 6
+    # Zero padded
     output += self.user_id.to_s.rjust(6, "0")
 
-    # Description of payments in the file (e.g. Payroll, Creditors etc.). 
-    output += self.description.to_s.ljust(12, " ")
+    # Description of payments in the file (e.g. Payroll, Creditors etc.)
+    # Char position: 63-74
+    # Max: 12
+    # Blank filled
+    output += self.description.to_s.ljust(12)
 
-    # Date and time on which the payment is to be processed.
-    output += self.process_at.strftime("%d%m%y%H%M")
+    # Date on which the payment is to be processed
+    # Char position: 75-80
+    # Max: 6
+    output += self.process_at.rjust(6, "0")
 
     # Reserved
-    output += " " * 36
+    # Max: 40
+    # Char position: 81-120
+    output += " " * 40
   end
 
   def batch_control_record
