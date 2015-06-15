@@ -6,8 +6,8 @@ require 'aba/version'
 Gem::Specification.new do |spec|
   spec.name          = "aba"
   spec.version       = Aba::VERSION
-  spec.authors       = ["Andrey Bazhutkin"]
-  spec.email         = ["andrey.bazhutkin@gmail.com"]
+  spec.authors       = ["Andrey Bazhutkin", "Trevor Wistaff"]
+  spec.email         = ["andrey.bazhutkin@gmail.com", "trev@a07.com.au"]
   spec.summary       = "ABA File Generator"
   spec.description   = "ABA (Australian Bankers Association) File Generator"
   spec.homepage      = "https://github.com/andrba/aba"
