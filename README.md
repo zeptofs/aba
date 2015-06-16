@@ -70,14 +70,12 @@ puts aba.get_transaction_errors
 # Returns:
 # {0=>
 #   ["bsb format is incorrect",
-#    "trace_bsb format is incorrect",
-#    "amount must be an integer",
 #    "account_number must be a valid account number",
-#    "indicator must be a one of ' ', 'N', 'T', 'W', 'X', 'Y'",
-#    "transaction_code must be a one of 50, 53, 54, 56, 57, 13"]}
+#    "trace_bsb format is incorrect",
+#    "trace_account_number must be a valid account number"]}
 
 
-# Setting the optional validate parameter to true will suppress output if the
+# Setting the optional validate parameter to true will an empty string if the
 # data does not validate
 
 puts aba.to_s(true)
