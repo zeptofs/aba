@@ -7,14 +7,30 @@ class Aba
 
   attr_accessor :bsb, :financial_institution, :user_name, :user_id, :description, :process_at
 
-  validates_bsb :bsb, allow_blank: true
+  # BSB
+  validates_bsb         :bsb, allow_blank: true
 
-  validates_max_length :user_name,              26
-  validates_max_length :user_id,                6
-  validates_max_length :description,            12
+  # Financial Institution
+  validates_length      :financial_institution, 3
 
-  validates_length     :financial_institution,  3
-  validates_length     :process_at,             6
+  # User Name
+  validates_presence_of :user_name
+  validates_max_length  :user_name, 26
+  validates_becs        :user_name
+
+  # User ID
+  validates_presence_of :user_id
+  validates_max_length  :user_id, 6
+  validates_integer     :user_id, false
+
+  # Description
+  validates_max_length  :description, 12
+  validates_becs        :description
+
+  # Process at Date
+  validates_length      :process_at, 6
+  validates_integer     :process_at, false
+
 
   def initialize(attrs = {})
     attrs.each do |key, value|
@@ -22,14 +38,17 @@ class Aba
     end
 
     @transactions = []
+    @transaction_errors = nil
 
     yield self if block_given?
   end
 
-  def to_s
+  def to_s(validate = false)
+    return '' if validate && !(valid? && transactions_valid?)
+
     # Descriptive record
     output = "#{descriptive_record}\r\n"
-    
+
     # Transactions records
     output += @transactions.map{ |t| t.to_s }.join("\r\n")
 
@@ -39,6 +58,30 @@ class Aba
 
   def add_transaction(transaction)
     @transactions << transaction
+  end
+
+  def transactions
+    @transactions
+  end
+
+  def transactions_valid?
+    transaction_errors = {}
+    @transactions.each_with_index do |transaction, i|
+      transaction_errors[i] = transaction.errors unless transaction.valid?
+    end
+    @transaction_errors = transaction_errors if transaction_errors.length
+    @transaction_errors.empty?
+  end
+
+  # Not updated until transactions_valid? is called - simulates Validations.errors
+  def transaction_errors
+    @transaction_errors
+  end
+
+  # Updates @transaction_errors - simulates Validations.get_errors
+  def get_transaction_errors
+    transactions_valid?
+    @transaction_errors unless @transaction_errors.empty?
   end
 
   private
@@ -55,7 +98,7 @@ class Aba
     # Blank filled
     output += self.bsb.nil? ? " " * 17 : self.bsb.to_s.ljust(17)
 
-    # Sequence number 
+    # Sequence number
     # Char position: 19-20
     # Max: 2
     # Zero padded
@@ -66,7 +109,7 @@ class Aba
     # Char position: 21-23
     output += self.financial_institution.to_s
 
-    # Reserved 
+    # Reserved
     # Max: 7
     # Char position: 24-30
     output += " " * 7
@@ -74,6 +117,7 @@ class Aba
     # Name of User supplying File
     # Char position: 31-56
     # Max: 26
+    # Full BECS character set valid
     # Blank filled
     output += self.user_name.to_s.ljust(26)
 
@@ -86,6 +130,7 @@ class Aba
     # Description of payments in the file (e.g. Payroll, Creditors etc.)
     # Char position: 63-74
     # Max: 12
+    # Full BECS character set valid
     # Blank filled
     output += self.description.to_s.ljust(12)
 
@@ -131,12 +176,12 @@ class Aba
     # Char position: 21-30
     output += net_total_amount.abs.to_s.rjust(10, "0")
 
-    # Credit Total Amount 
+    # Credit Total Amount
     # Max: 10
     # Char position: 31-40
     output += credit_total_amount.abs.to_s.rjust(10, "0")
 
-    # Debit Total Amount 
+    # Debit Total Amount
     # Max: 10
     # Char position: 41-50
     output += debit_total_amount.abs.to_s.rjust(10, "0")
@@ -146,7 +191,7 @@ class Aba
     # Char position: 51-74
     output += " " * 24
 
-    # Total Item Count 
+    # Total Item Count
     # Max: 6
     # Char position: 75-80
     output += @transactions.size.to_s.rjust(6, "0")
