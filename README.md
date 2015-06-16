@@ -1,4 +1,4 @@
-[ ![Codeship Status for krakendevelopments/aba](https://codeship.com/projects/982382f0-f22b-0132-a80d-0acc257ded9c/status?branch=master)](https://codeship.com/projects/85083)
+[![Build Status](https://travis-ci.org/andrba/aba.svg?branch=master)](https://travis-ci.org/andrba/aba) [![Code Climate](https://codeclimate.com/github/andrba/aba/badges/gpa.svg)](https://codeclimate.com/github/andrba/aba)
 
 # Aba
 
