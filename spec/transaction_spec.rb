@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "spec_helper"
 
 describe Aba::Transaction do
@@ -10,8 +12,8 @@ describe Aba::Transaction do
     :witholding_amount => 87,
     :indicator => "W",
     :lodgement_reference => "R45343",
-    :trace_bsb => "123-234", 
-    :trace_account_number => "4647642", 
+    :trace_bsb => "123-234",
+    :trace_account_number => "4647642",
     :name_of_remitter => "Remitter"
   } }
   subject(:transaction) { Aba::Transaction.new(transaction_params) }
