@@ -1,5 +1,4 @@
 class Aba
-  require 'pry'
   module Validations
     attr_accessor :errors
 
