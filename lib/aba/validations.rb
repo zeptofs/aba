@@ -5,7 +5,6 @@ class Aba
 
     BECS_PATTERN = /\A[\w\+\-\@\ \$\!\%\&\(\)\*\.\/\#\=\:\;\?\,\'\[\]\_\^]*\Z/
     INDICATORS = [' ', 'N', 'T', 'W', 'X', 'Y']
-    TRANSACTION_CODES = [50, 53, 54, 56, 57, 13]
 
     def self.included(base)
       base.instance_eval do
@@ -36,9 +35,9 @@ class Aba
             self.errors << "#{attribute} length must be exactly #{param} characters" if value.to_s.length != param
           when :integer
             if param
-              self.errors << "#{attribute} must be an integer" unless value.to_s =~ /\A[+-]?\d+\Z/
+              self.errors << "#{attribute} must be a number" unless value.to_s =~ /\A[+-]?\d+\Z/
             else
-              self.errors << "#{attribute} must be an unsigned integer" unless value.to_s =~ /\A\d+\Z/
+              self.errors << "#{attribute} must be an unsigned number" unless value.to_s =~ /\A\d+\Z/
             end
           when :account_number
             if value.to_s =~ /\A[0\ ]+\Z/ || value.to_s !~ /\A[a-z\d\ ]{1,9}\Z/
@@ -50,8 +49,7 @@ class Aba
             list = INDICATORS.join('\', \'')
             self.errors << "#{attribute} must be a one of '#{list}'" unless INDICATORS.include?(value.to_s)
           when :transaction_code
-            list = TRANSACTION_CODES.join(', ')
-            self.errors << "#{attribute} must be a one of #{list}" unless TRANSACTION_CODES.include?(value.to_i)
+            self.errors << "#{attribute} must be a 2 digit number" unless value.to_s =~ /\A\d{2,2}\Z/
           end
         end
       end

@@ -32,7 +32,7 @@ class Aba
   validates_integer     :process_at, false
 
 
-  def initialize(attrs = {})
+  def initialize(attrs = {}, transactions = [])
     attrs.each do |key, value|
       send("#{key}=", value)
     end
@@ -40,12 +40,14 @@ class Aba
     @transaction_index = 0
     @transactions = {}
 
+    transactions.to_a.each{ |t| self.add_transaction(t) } unless transactions.nil? || transactions.empty?
+
     yield self if block_given?
   end
 
   def to_s
     raise RuntimeError, 'No transactions present - add one using `add_transaction`' if @transactions.empty?
-    raise RuntimeError, 'Aba data is invalid - check the contents of `all_errors`' unless valid?
+    raise RuntimeError, 'ABA data is invalid - check the contents of `all_errors`' unless valid?
 
     # Descriptive record
     output = "#{descriptive_record}\r\n"
@@ -157,9 +159,9 @@ class Aba
     debit_total_amount  = 0
 
     @transactions.each do |t|
-      net_total_amount += t[1].amount
-      credit_total_amount += t[1].amount if t[1].amount > 0
-      debit_total_amount += t[1].amount if t[1].amount < 0
+      net_total_amount += t[1].amount.to_i
+      credit_total_amount += t[1].amount.to_i if t[1].amount.to_i > 0
+      debit_total_amount += t[1].amount.to_i if t[1].amount.to_i < 0
     end
 
     # Record type

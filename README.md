@@ -40,6 +40,30 @@ puts aba.to_s # View output
 File.write("/Users/me/dd_#{Time.now.to_i}.aba", aba.to_s) # or write output to file
 ```
 
+There are a few ways to create a complete set of ABA data:
+
+```ruby
+# Transactions added to the defined ABA object variable
+aba = Aba.new financial_institution: 'ANZ', user_name: 'Joe Blow', user_id: 123456, process_at: 200615
+aba.add_transaction bsb: '123-456', account_number: '000-123-456', amount: 50000
+aba.add_transaction bsb: '456-789', account_number: '123-456-789', amount: '-10000'
+
+# Transactions passed individually inside a block
+aba = Aba.new financial_institution: 'ANZ', user_name: 'Joe Blow', user_id: 123456, process_at: 200615 do |a|
+  a.add_transaction bsb: '123-456', account_number: '000-123-456', amount: 50000
+  a.add_transaction bsb: '456-789', account_number: '123-456-789', amount: '-10000'
+end
+
+# Transactions as an array passed to the second param of Aba.new()
+aba = Aba.new(
+  { financial_institution: 'ANZ', user_name: 'Joe Blow', user_id: 123456, process_at: 200615 },
+  [
+    { bsb: '123-456', account_number: '000-123-456', amount: 50000 },
+    { bsb: '456-789', account_number: '123-456-789', amount: '-10000' }
+  ]
+)
+```
+
 Validation errors can be caught in several ways:
 
 ```ruby
@@ -51,23 +75,18 @@ aba = Aba.new(
   process_at: Time.now.strftime("%d%m%y")
 )
 
-
 # Add a transaction with a bad BSB
 aba.add_transaction(
   bsb: "abc-123",
   account_number: "000123456"
 )
 
-
 # Is the data valid?
 aba.all_valid?
-
 # Returns: false
-
 
 # Return a structured array of errors
 puts aba.all_errors
-
 # Returns:
 # {:aba => ["user_name must not contain invalid characters"],
 #  :transactions =>

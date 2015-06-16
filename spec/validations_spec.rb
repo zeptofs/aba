@@ -82,7 +82,7 @@ describe Aba::Validations do
 
       subject.attr1 = "+1234A"
       expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["attr1 must be an integer"]
+      expect(subject.errors).to eq ["attr1 must be a number"]
 
       subject.attr1 = "+1234"
       expect(subject.valid?).to eq true
@@ -102,15 +102,15 @@ describe Aba::Validations do
 
       subject.attr1 = "1234A"
       expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["attr1 must be an unsigned integer"]
+      expect(subject.errors).to eq ["attr1 must be an unsigned number"]
 
       subject.attr1 = "+1234"
       expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["attr1 must be an unsigned integer"]
+      expect(subject.errors).to eq ["attr1 must be an unsigned number"]
 
       subject.attr1 = "-1234"
       expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["attr1 must be an unsigned integer"]
+      expect(subject.errors).to eq ["attr1 must be an unsigned number"]
 
       subject.attr1 = "1234"
       expect(subject.valid?).to eq true
@@ -195,10 +195,20 @@ describe Aba::Validations do
 
       subject.attr1 = "AA"
       expect(subject.valid?).to eq false
-      list = Aba::Validations::TRANSACTION_CODES.join(', ')
-      expect(subject.errors).to eq ["attr1 must be a one of #{list}"]
+      expect(subject.errors).to eq ["attr1 must be a 2 digit number"]
 
-      subject.attr1 = Aba::Validations::TRANSACTION_CODES.sample
+      subject.attr1 = "123"
+      expect(subject.valid?).to eq false
+      expect(subject.errors).to eq ["attr1 must be a 2 digit number"]
+
+      subject.attr1 = "1"
+      expect(subject.valid?).to eq false
+      expect(subject.errors).to eq ["attr1 must be a 2 digit number"]
+
+      subject.attr1 = "15"
+      expect(subject.valid?).to eq true
+
+      subject.attr1 = 15
       expect(subject.valid?).to eq true
     end
   end

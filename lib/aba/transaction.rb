@@ -54,9 +54,9 @@ class Aba
       @indicator || Aba::Validations::INDICATORS.first
     end
 
-    # Fall back to 53
+    # Fall back to 50
     def transaction_code
-      @transaction_code || Aba::Validations::TRANSACTION_CODES.first
+      @transaction_code || 50
     end
 
     # Fall back to 0
@@ -119,7 +119,7 @@ class Aba
       output += transaction_code.to_s
 
       # Amount to be credited or debited
-      output += amount.abs.to_s.rjust(10, "0")
+      output += amount.to_i.abs.to_s.rjust(10, "0")
 
       # Title of Account
       # Full BECS character set valid
