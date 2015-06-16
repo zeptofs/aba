@@ -5,7 +5,7 @@ require "aba/transaction"
 class Aba
   include Aba::Validations
 
-  attr_accessor :bsb, :financial_institution, :user_name, :user_id, :description, :process_at
+  attr_accessor :bsb, :financial_institution, :user_name, :user_id, :description, :process_at, :transactions
 
   # BSB
   validates_bsb         :bsb, allow_blank: true
@@ -37,51 +37,57 @@ class Aba
       send("#{key}=", value)
     end
 
-    @transactions = []
-    @transaction_errors = nil
+    @transaction_index = 0
+    @transactions = {}
 
     yield self if block_given?
   end
 
-  def to_s(validate = false)
-    return '' if validate && !(valid? && transactions_valid?)
+  def to_s
+    raise RuntimeError, 'No transactions present - add one using `add_transaction`' if @transactions.empty?
+    raise RuntimeError, 'Aba data is invalid - check the contents of `all_errors`' unless valid?
 
     # Descriptive record
     output = "#{descriptive_record}\r\n"
 
     # Transactions records
-    output += @transactions.map{ |t| t.to_s }.join("\r\n")
+    output += @transactions.map{ |t| t[1].to_s }.join("\r\n")
 
     # Batch control record
     output += "\r\n#{batch_control_record}"
   end
 
-  def add_transaction(transaction)
-    @transactions << transaction
-  end
-
-  def transactions
-    @transactions
+  def add_transaction(attrs = {})
+    if attrs.instance_of?(Aba::Transaction)
+      transaction = attrs
+    else
+      transaction = Aba::Transaction.new(attrs)
+    end
+    @transactions[@transaction_index] = transaction
+    @transaction_index += 1
+    transaction
   end
 
   def transactions_valid?
-    transaction_errors = {}
-    @transactions.each_with_index do |transaction, i|
-      transaction_errors[i] = transaction.errors unless transaction.valid?
-    end
-    @transaction_errors = transaction_errors if transaction_errors.length
-    @transaction_errors.empty?
+    !@transactions.map{ |t| t[1].valid? }.include?(false)
   end
 
-  # Not updated until transactions_valid? is called - simulates Validations.errors
-  def transaction_errors
-    @transaction_errors
+  def all_valid?
+    valid? && transactions_valid?
   end
 
-  # Updates @transaction_errors - simulates Validations.get_errors
-  def get_transaction_errors
+  def all_errors
+    # Run validations
+    valid?
     transactions_valid?
-    @transaction_errors unless @transaction_errors.empty?
+
+    # Build errors
+    all_errors = {}
+    all_errors[:aba] = self.errors unless self.errors.empty?
+    transaction_errors = @transactions.each_with_index.map{ |(k, t), i| [k, t.errors] }.reject{ |e| e[1].nil? || e[1].empty? }.to_h
+    all_errors[:transactions] = transaction_errors unless transaction_errors.empty?
+
+    all_errors
   end
 
   private
@@ -137,7 +143,7 @@ class Aba
     # Date on which the payment is to be processed
     # Char position: 75-80
     # Max: 6
-    output += self.process_at.rjust(6, "0")
+    output += self.process_at.to_s.rjust(6, "0")
 
     # Reserved
     # Max: 40
@@ -151,9 +157,9 @@ class Aba
     debit_total_amount  = 0
 
     @transactions.each do |t|
-      net_total_amount += t.amount
-      credit_total_amount += t.amount if t.amount > 0
-      debit_total_amount += t.amount if t.amount < 0
+      net_total_amount += t[1].amount
+      credit_total_amount += t[1].amount if t[1].amount > 0
+      debit_total_amount += t[1].amount if t[1].amount < 0
     end
 
     # Record type

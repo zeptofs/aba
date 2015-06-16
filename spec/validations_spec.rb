@@ -131,38 +131,21 @@ describe Aba::Validations do
       expect(subject.valid?).to eq false
       expect(subject.errors).to eq ["attr1 must be a valid account number"]
 
-      subject.attr1 = "------"
+      subject.attr1 = "00 0 0"
       expect(subject.valid?).to eq false
       expect(subject.errors).to eq ["attr1 must be a valid account number"]
 
-      subject.attr1 = "0--0-0"
+      subject.attr1 = "00 0A0"
       expect(subject.valid?).to eq false
       expect(subject.errors).to eq ["attr1 must be a valid account number"]
-
-      subject.attr1 = "00-0 0"
-      expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["attr1 must be a valid account number"]
-
-      subject.attr1 = "00-0A0"
-      expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["attr1 must be a valid account number"]
-
-      subject.attr1 = "00-111"
-      expect(subject.valid?).to eq true
 
       subject.attr1 = "00 111"
       expect(subject.valid?).to eq true
 
-      subject.attr1 = "00 1-1"
-      expect(subject.valid?).to eq true
-
-      subject.attr1 = "0a 1-1"
+      subject.attr1 = "0a 111"
       expect(subject.valid?).to eq true
 
       subject.attr1 = "aaaaaa"
-      expect(subject.valid?).to eq true
-
-      subject.attr1 = "aa-aaa"
       expect(subject.valid?).to eq true
 
       subject.attr1 = "aa aaa"

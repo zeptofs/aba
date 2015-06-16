@@ -44,19 +44,34 @@ class Aba
       end
     end
 
+    # Allow dashes to be input, but remove them from output
+    def account_number
+      @account_number ? @account_number.to_s.gsub('-', '') : nil
+    end
+
     # Fall back to blank string
     def indicator
-      @indicator || ' '
+      @indicator || Aba::Validations::INDICATORS.first
     end
 
     # Fall back to 53
     def transaction_code
-      @transaction_code || 53
+      @transaction_code || Aba::Validations::TRANSACTION_CODES.first
     end
 
     # Fall back to 0
     def amount
       @amount || 0
+    end
+
+    # Fall back to empty string
+    def account_name
+      @account_name || ''
+    end
+
+    # Fall back to empty string
+    def lodgement_reference
+      @lodgement_reference || ''
     end
 
     # Fall back to BSB
@@ -69,7 +84,13 @@ class Aba
       @trace_account_number || account_number
     end
 
+    def name_of_remitter
+      @name_of_remitter || ''
+    end
+
     def to_s
+      raise RuntimeError, 'Transaction data is invalid - check the contents of `all_errors`' unless valid?
+
       # Record type
       output = "1"
 
@@ -77,6 +98,7 @@ class Aba
       output += bsb
 
       # Account number
+      #raise RuntimeError, 'Transaction is missing account_number' unless account_number
       output += account_number.to_s.rjust(9, " ")
 
       # Withholding Tax Indicator
@@ -101,11 +123,11 @@ class Aba
 
       # Title of Account
       # Full BECS character set valid
-      output += account_name.ljust(32, " ")
+      output += account_name.to_s.ljust(32, " ")
 
       # Lodgement Reference Produced on the recipient’s Account Statement.
       # Full BECS character set valid
-      output += lodgement_reference.ljust(18, " ")
+      output += lodgement_reference.to_s.ljust(18, " ")
 
       # Trace BSB Number
       output += trace_bsb
@@ -115,7 +137,7 @@ class Aba
 
       # Name of Remitter Produced on the recipient’s Account Statement
       # Full BECS character set valid
-      output += name_of_remitter.ljust(16, " ")
+      output += name_of_remitter.to_s.ljust(16, " ")
 
       # Withholding amount in cents
       output += (witholding_amount || 0).abs.to_s.rjust(8, "0")
