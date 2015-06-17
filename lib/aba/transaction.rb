@@ -81,7 +81,7 @@ class Aba
 
     # Fall back to Account Number
     def trace_account_number
-      @trace_account_number || account_number
+      @trace_account_number ? @trace_account_number.to_s.gsub('-', '') : account_number
     end
 
     def name_of_remitter
