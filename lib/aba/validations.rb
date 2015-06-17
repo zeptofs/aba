@@ -2,6 +2,9 @@ class Aba
   module Validations
     attr_accessor :errors
 
+    BECS_PATTERN = /\A[\w\+\-\@\ \$\!\%\&\(\)\*\.\/\#\=\:\;\?\,\'\[\]\_\^]*\Z/
+    INDICATORS = [' ', 'N', 'T', 'W', 'X', 'Y']
+
     def self.included(base)
       base.instance_eval do
         @_validations = {}
@@ -30,17 +33,32 @@ class Aba
           when :length
             self.errors << "#{attribute} length must be exactly #{param} characters" if value.to_s.length != param
           when :integer
-            self.errors << "#{attribute} must be an integer" unless value.to_s =~ /\A[+-]?\d+\Z/
+            if param
+              self.errors << "#{attribute} must be a number" unless value.to_s =~ /\A[+-]?\d+\Z/
+            else
+              self.errors << "#{attribute} must be an unsigned number" unless value.to_s =~ /\A\d+\Z/
+            end
+          when :account_number
+            if value.to_s =~ /\A[0\ ]+\Z/ || value.to_s !~ /\A[a-z\d\ ]{1,9}\Z/
+              self.errors << "#{attribute} must be a valid account number"
+            end
+          when :becs
+            self.errors << "#{attribute} must not contain invalid characters" unless value.to_s =~ BECS_PATTERN
+          when :indicator
+            list = INDICATORS.join('\', \'')
+            self.errors << "#{attribute} must be a one of '#{list}'" unless INDICATORS.include?(value.to_s)
+          when :transaction_code
+            self.errors << "#{attribute} must be a 2 digit number" unless value.to_s =~ /\A\d{2,2}\Z/
           end
         end
       end
 
       self.errors.empty?
     end
-   
+
     module ClassMethods
       def validates_presence_of(*attributes)
-        attributes.each do |a| 
+        attributes.each do |a|
           add_validation_attribute(a, :presence)
         end
       end
@@ -58,8 +76,24 @@ class Aba
         add_validation_attribute(attribute, :length, length)
       end
 
-      def validates_integer(attribute)
-        add_validation_attribute(attribute, :integer)
+      def validates_integer(attribute, signed = true)
+        add_validation_attribute(attribute, :integer, signed)
+      end
+
+      def validates_account_number(attribute)
+        add_validation_attribute(attribute, :account_number)
+      end
+
+      def validates_becs(attribute)
+        add_validation_attribute(attribute, :becs)
+      end
+
+      def validates_indicator(attribute)
+        add_validation_attribute(attribute, :indicator)
+      end
+
+      def validates_transaction_code(attribute)
+        add_validation_attribute(attribute, :transaction_code)
       end
 
       private
