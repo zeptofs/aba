@@ -40,7 +40,11 @@ class Aba
     @transaction_index = 0
     @transactions = {}
 
-    transactions.to_a.each{ |t| self.add_transaction(t) } unless transactions.nil? || transactions.empty?
+    unless transactions.nil? || transactions.empty?
+      transactions.to_a.each do |t|
+        self.add_transaction(t) unless t.nil? || t.empty?
+      end
+    end
 
     yield self if block_given?
   end

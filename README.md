@@ -46,12 +46,12 @@ There are a few ways to create a complete set of ABA data:
 # Transactions added to the defined ABA object variable
 aba = Aba.new financial_institution: 'ANZ', user_name: 'Joe Blow', user_id: 123456, process_at: 200615
 aba.add_transaction bsb: '123-456', account_number: '000-123-456', amount: 50000
-aba.add_transaction bsb: '456-789', account_number: '123-456-789', amount: '-10000'
+aba.add_transaction bsb: '456-789', account_number: '123-456-789', amount: '-10000', transaction_code: 13
 
 # Transactions passed individually inside a block
 aba = Aba.new financial_institution: 'ANZ', user_name: 'Joe Blow', user_id: 123456, process_at: 200615 do |a|
   a.add_transaction bsb: '123-456', account_number: '000-123-456', amount: 50000
-  a.add_transaction bsb: '456-789', account_number: '123-456-789', amount: '-10000'
+  a.add_transaction bsb: '456-789', account_number: '123-456-789', amount: '-10000', transaction_code: 13
 end
 
 # Transactions as an array passed to the second param of Aba.new()
@@ -59,9 +59,12 @@ aba = Aba.new(
   { financial_institution: 'ANZ', user_name: 'Joe Blow', user_id: 123456, process_at: 200615 },
   [
     { bsb: '123-456', account_number: '000-123-456', amount: 50000 },
-    { bsb: '456-789', account_number: '123-456-789', amount: '-10000' }
+    { bsb: '456-789', account_number: '123-456-789', amount: '-10000', transaction_code: 13 }
   ]
 )
+
+# NOTE: Be careful with negative transaction amounts! transaction_code will not
+#       be set to debit automatically!
 ```
 
 Validation errors can be caught in several ways:
