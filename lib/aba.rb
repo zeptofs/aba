@@ -75,28 +75,32 @@ class Aba
   end
 
   def transactions_valid?
-    !@transactions.map{ |t| t[1].valid? }.include?(false)
+    !has_transaction_errors?
   end
 
-  def all_valid?
-    valid? && transactions_valid?
+  def valid?
+    !has_errors? && transactions_valid?
   end
 
-  def all_errors
+  def errors
     # Run validations
-    valid?
-    transactions_valid?
+    has_errors?
+    has_transaction_errors?
 
     # Build errors
     all_errors = {}
-    all_errors[:aba] = self.errors unless self.errors.empty?
-    transaction_errors = @transactions.each_with_index.map{ |(k, t), i| [k, t.errors] }.reject{ |e| e[1].nil? || e[1].empty? }.to_h
-    all_errors[:transactions] = transaction_errors unless transaction_errors.empty?
+    all_errors[:aba] = self.error_collection unless self.error_collection.empty?
+    transaction_error_collection = @transactions.each_with_index.map{ |(k, t), i| [k, t.error_collection] }.reject{ |e| e[1].nil? || e[1].empty? }.to_h
+    all_errors[:transactions] = transaction_error_collection unless transaction_error_collection.empty?
 
-    all_errors
+    all_errors unless all_errors.empty?
   end
 
   private
+
+  def has_transaction_errors?
+    @transactions.map{ |t| t[1].valid? }.include?(false)
+  end
 
   def descriptive_record
     # Record type

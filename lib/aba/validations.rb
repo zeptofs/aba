@@ -1,6 +1,6 @@
 class Aba
   module Validations
-    attr_accessor :errors
+    attr_accessor :error_collection
 
     BECS_PATTERN = /\A[\w\+\-\@\ \$\!\%\&\(\)\*\.\/\#\=\:\;\?\,\'\[\]\_\^]*\Z/
     INDICATORS = [' ', 'N', 'T', 'W', 'X', 'Y']
@@ -13,9 +13,17 @@ class Aba
       base.send :extend, ClassMethods
     end
 
-    # Run all validations
     def valid?
-      self.errors = []
+      !has_errors?
+    end
+
+    alias_method 'errors', 'error_collection'
+
+    private
+
+    # Run all validations
+    def has_errors?
+      self.error_collection = []
 
       self.class.instance_variable_get(:@_validations).each do |attribute, validations|
         value = send(attribute)
@@ -23,37 +31,37 @@ class Aba
         validations.each do |type, param|
           case type
           when :presence
-            self.errors << "#{attribute} is empty" if value.nil? || value.to_s.empty?
+            self.error_collection << "#{attribute} is empty" if value.nil? || value.to_s.empty?
           when :bsb
             unless((param && value.nil?) || value =~ /^\d{3}-\d{3}$/)
-              self.errors << "#{attribute} format is incorrect"
+              self.error_collection << "#{attribute} format is incorrect"
             end
           when :max_length
-            self.errors << "#{attribute} length must not exceed #{param} characters" if value.to_s.length > param
+            self.error_collection << "#{attribute} length must not exceed #{param} characters" if value.to_s.length > param
           when :length
-            self.errors << "#{attribute} length must be exactly #{param} characters" if value.to_s.length != param
+            self.error_collection << "#{attribute} length must be exactly #{param} characters" if value.to_s.length != param
           when :integer
             if param
-              self.errors << "#{attribute} must be a number" unless value.to_s =~ /\A[+-]?\d+\Z/
+              self.error_collection << "#{attribute} must be a number" unless value.to_s =~ /\A[+-]?\d+\Z/
             else
-              self.errors << "#{attribute} must be an unsigned number" unless value.to_s =~ /\A\d+\Z/
+              self.error_collection << "#{attribute} must be an unsigned number" unless value.to_s =~ /\A\d+\Z/
             end
           when :account_number
             if value.to_s =~ /\A[0\ ]+\Z/ || value.to_s !~ /\A[a-z\d\ ]{1,9}\Z/
-              self.errors << "#{attribute} must be a valid account number"
+              self.error_collection << "#{attribute} must be a valid account number"
             end
           when :becs
-            self.errors << "#{attribute} must not contain invalid characters" unless value.to_s =~ BECS_PATTERN
+            self.error_collection << "#{attribute} must not contain invalid characters" unless value.to_s =~ BECS_PATTERN
           when :indicator
             list = INDICATORS.join('\', \'')
-            self.errors << "#{attribute} must be a one of '#{list}'" unless INDICATORS.include?(value.to_s)
+            self.error_collection << "#{attribute} must be a one of '#{list}'" unless INDICATORS.include?(value.to_s)
           when :transaction_code
-            self.errors << "#{attribute} must be a 2 digit number" unless value.to_s =~ /\A\d{2,2}\Z/
+            self.error_collection << "#{attribute} must be a 2 digit number" unless value.to_s =~ /\A\d{2,2}\Z/
           end
         end
       end
 
-      self.errors.empty?
+      !self.error_collection.empty?
     end
 
     module ClassMethods

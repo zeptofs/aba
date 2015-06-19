@@ -85,11 +85,11 @@ aba.add_transaction(
 )
 
 # Is the data valid?
-aba.all_valid?
+aba.valid?
 # Returns: false
 
 # Return a structured array of errors
-puts aba.all_errors
+puts aba.errors
 # Returns:
 # {:aba => ["user_name must not contain invalid characters"],
 #  :transactions =>
