@@ -89,7 +89,7 @@ class Aba
     end
 
     def to_s
-      raise RuntimeError, 'Transaction data is invalid - check the contents of `all_errors`' unless valid?
+      raise RuntimeError, 'Transaction data is invalid - check the contents of `errors`' unless valid?
 
       # Record type
       output = "1"

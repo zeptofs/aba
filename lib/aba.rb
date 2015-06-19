@@ -51,7 +51,7 @@ class Aba
 
   def to_s
     raise RuntimeError, 'No transactions present - add one using `add_transaction`' if @transactions.empty?
-    raise RuntimeError, 'ABA data is invalid - check the contents of `all_errors`' unless valid?
+    raise RuntimeError, 'ABA data is invalid - check the contents of `errors`' unless valid?
 
     # Descriptive record
     output = "#{descriptive_record}\r\n"
