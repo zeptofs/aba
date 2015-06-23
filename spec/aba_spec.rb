@@ -1,7 +1,9 @@
+# encoding: UTF-8
+
 require "spec_helper"
 
 describe Aba do
-  let(:aba) { Aba.new(financial_institution: "WPC", user_name: "John Doe", 
+  let(:aba) { Aba.new(financial_institution: "WPC", user_name: "John Doe",
                       user_id: "466364", description: "Payroll", process_at: "190615") }
   let(:transaction_values) { [30, -20] }
   let(:transactions) do
