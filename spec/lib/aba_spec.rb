@@ -3,7 +3,7 @@
 require "spec_helper"
 
 describe Aba do
-  describe "#batch" do
+  describe ".batch" do
     it "initialize instance of Aba::Batch with passed arguments" do
       attributes = double.as_null_object
       transactions = double.as_null_object
