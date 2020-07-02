@@ -104,6 +104,10 @@ class Aba
         add_validation_attribute(attribute, :transaction_code)
       end
 
+      def validates_return_code(attribute)
+        add_validation_attribute(attribute, :integer, :return_code)
+      end
+
       private
 
       def add_validation_attribute(attribute, type, param = true)

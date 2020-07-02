@@ -1,6 +1,7 @@
 require "aba/version"
 require "aba/validations"
 require "aba/batch"
+require "aba/return"
 require "aba/transaction"
 
 class Aba
