@@ -16,6 +16,21 @@ describe Aba::Batch do
   end
   before { transactions.each { |trx| batch.add_transaction(trx) } }
 
+  let(:return_values) { [3, -2] }
+  let(:returns) do
+    return_values.map do |amount|
+      Aba::Return.new(bsb: '453-543', account_number: '45656733', amount: amount,
+                      account_name: 'John Doe', transaction_code: 53,
+                      lodgement_reference: 'R435564', trace_bsb: '342-342',
+                      trace_account_number: '3244654', name_of_remitter: 'Remitter',
+                      return_code: 8, original_user_id: 654321,
+                      original_day_of_processing: '12',
+
+      )
+    end
+  end
+  before { returns.each { |trx| batch.add_return(trx) } }
+
   describe "#to_s" do
 
     context 'when descriptive record' do
@@ -40,21 +55,24 @@ describe Aba::Batch do
       it "should contain transactions records" do
         expect(batch.to_s).to include("1342-342  3244654 530000000030John Doe                        R435564           453-543 45656733Remitter        00000000\r\n")
         expect(batch.to_s).to include("1342-342  3244654 530000000020John Doe                        R435564           453-543 45656733Remitter        00000000\r\n")
+        expect(batch.to_s).to include("2453-543 456567338530000000003John Doe                        R435564           342-342  3244654Remitter        12654321\r\n")
+        expect(batch.to_s).to include("2453-543 456567338530000000002John Doe                        R435564           342-342  3244654Remitter        12654321\r\n")
       end
     end
 
     context 'when file total record' do
 
       context 'with unbalanced transactions' do
-        it "should return a string wihere the net total is not zero" do
-          expect(batch.to_s).to include("7999-999            000000001000000000300000000020                        000002                                        ")
+        it "should return a string where the net total is not zero" do
+          expect(batch.to_s).to include("7999-999            000000001100000000330000000022                        000004                                        ")
         end
       end
 
       context 'with balanced transactions' do
         let(:transaction_values) { [30, 30, -60] }
+        let(:return_values) { [3, 3, -6] }
         it "should return a string where the net total is zero" do
-          expect(batch.to_s).to include("7999-999            000000000000000000600000000060                        000003                                        ")
+          expect(batch.to_s).to include("7999-999            000000000000000000660000000066                        000006                                        ")
         end
       end
     end

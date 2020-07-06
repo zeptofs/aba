@@ -68,20 +68,13 @@ class Aba
       add_entry(attrs, Aba::Return)
     end
 
-    def add_entry(attrs, type = Aba::Transaction)
-      (attrs.instance_of?(type) ? attrs : type.new(attrs)).tap do |entry|
-        entries[@entries_index] = entry
-        @entries_index += 1
-      end
-    end
-
     def transactions
       entries.select { |entry| entry.instance_of?(Aba::Transaction) }
     end
 
     # @deprecated Use entries_valid?
     def transactions_valid?
-      !has_transaction_errors?
+      !transactions.map { |t| t[1].valid? }.include?(false)
     end
 
     def entries_valid?
@@ -100,16 +93,19 @@ class Aba
       # Build errors
       all_errors = {}
       all_errors[:aba] = self.error_collection unless self.error_collection.empty?
-      transaction_error_collection = entries.each_with_index.map { |(k, t), i| [k, t.error_collection] }.reject { |e| e[1].nil? || e[1].empty? }.to_h
-      all_errors[:entries] = transaction_error_collection unless transaction_error_collection.empty?
+      entry_error_collection = entries.each_with_index.map { |(k, t), i| [k, t.error_collection] }.reject { |e| e[1].nil? || e[1].empty? }.to_h
+      all_errors[:entries] = entry_error_collection unless entry_error_collection.empty?
 
       all_errors unless all_errors.empty?
     end
 
     private
 
-    def has_transaction_errors?
-      transactions.map { |t| t[1].valid? }.include?(false)
+    def add_entry(attrs, type = Aba::Transaction)
+      (attrs.instance_of?(type) ? attrs : type.new(attrs)).tap do |entry|
+        entries[@entries_index] = entry
+        @entries_index += 1
+      end
     end
 
     def has_entry_errors?
