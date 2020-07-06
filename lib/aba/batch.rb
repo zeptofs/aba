@@ -5,28 +5,28 @@ class Aba
     attr_accessor :bsb, :financial_institution, :user_name, :user_id, :description, :process_at, :entries
 
     # BSB
-    validates_bsb :bsb, allow_blank: true
+    validates_bsb         :bsb, allow_blank: true
 
     # Financial Institution
-    validates_length :financial_institution, 3
+    validates_length      :financial_institution, 3
 
     # User Name
     validates_presence_of :user_name
-    validates_max_length :user_name, 26
-    validates_becs :user_name
+    validates_max_length  :user_name, 26
+    validates_becs        :user_name
 
     # User ID
     validates_presence_of :user_id
-    validates_max_length :user_id, 6
-    validates_integer :user_id, false
+    validates_max_length  :user_id, 6
+    validates_integer     :user_id, false
 
     # Description
-    validates_max_length :description, 12
-    validates_becs :description
+    validates_max_length  :description, 12
+    validates_becs        :description
 
     # Process at Date
-    validates_length :process_at, 6
-    validates_integer :process_at, false
+    validates_length      :process_at, 6
+    validates_integer     :process_at, false
 
 
     def initialize(attrs = {}, transactions = [])
@@ -72,7 +72,6 @@ class Aba
       entries.select { |entry| entry.instance_of?(Aba::Transaction) }
     end
 
-    # @deprecated Use entries_valid?
     def transactions_valid?
       !transactions.map { |t| t[1].valid? }.include?(false)
     end
@@ -172,9 +171,9 @@ class Aba
     end
 
     def batch_control_record
-      net_total_amount = 0
+      net_total_amount    = 0
       credit_total_amount = 0
-      debit_total_amount = 0
+      debit_total_amount  = 0
 
       entries.each do |t|
         puts t[1].class.name
