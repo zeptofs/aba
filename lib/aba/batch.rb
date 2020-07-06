@@ -61,11 +61,11 @@ class Aba
     end
 
     def add_transaction(attrs = {})
-      add_entry(attrs, Aba::Transaction)
+      add_entry(Aba::Transaction, attrs)
     end
 
     def add_return(attrs = {})
-      add_entry(attrs, Aba::Return)
+      add_entry(Aba::Return, attrs)
     end
 
     def transactions
@@ -100,7 +100,7 @@ class Aba
 
     private
 
-    def add_entry(attrs, type = Aba::Transaction)
+    def add_entry(type, attrs)
       (attrs.instance_of?(type) ? attrs : type.new(attrs)).tap do |entry|
         entries[@entries_index] = entry
         @entries_index += 1
