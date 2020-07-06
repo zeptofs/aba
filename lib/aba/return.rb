@@ -4,7 +4,7 @@ class Aba
 
     attr_accessor :account_number, :transaction_code, :amount, :account_name,
                   :bsb, :trace_bsb, :trace_account_number, :name_of_remitter,
-                  :witholding_amount, :return_code, :lodgement_reference,
+                  :return_code, :lodgement_reference,
                   :original_day_of_processing, :original_user_id
 
     # BSB
