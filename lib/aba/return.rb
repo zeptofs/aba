@@ -56,11 +56,6 @@ class Aba
       @account_number ? @account_number.to_s.gsub('-', '') : nil
     end
 
-    # Fall back to blank string
-    def indicator
-      @indicator || Aba::Validations::INDICATORS.first
-    end
-
     # Fall back to 50
     def transaction_code
       @transaction_code || 50
