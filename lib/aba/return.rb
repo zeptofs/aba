@@ -96,63 +96,21 @@ class Aba
     end
 
     def to_s
-      raise RuntimeError, 'Transaction data is invalid - check the contents of `errors`' unless valid?
+      raise 'Transaction data is invalid - check the contents of `errors`' unless valid?
 
-      # Record type
-      output = "2"
-
-      # BSB of account
-      output += bsb
-
-      # Account number
-      #raise RuntimeError, 'Transaction is missing account_number' unless account_number
-      output += account_number.to_s.rjust(9, " ")
-
-      # Return Code
-      # 1 Invalid BSB Number,
-      # 2 Payment Stopped,
-      # 3 Account Closed,
-      # 4 Customer deceased,
-      # 5 No account/incorrect account Number,
-      # 6 Refer to customer,
-      # 7 Deleted,
-      # 8 Invalid User ID Number,
-      # 9 Technically Invalid,
-      output += return_code.to_s.ljust(1, " ")
-
-      # Transaction Code
-      # 50 General Credit.
-      # 53 Payroll.
-      # 54 Pension.
-      # 56 Dividend.
-      # 57 Debenture Interest.
-      # 13 General Debit.
-      output += transaction_code.to_s
-
-      # Amount to be credited or debited
-      output += amount.to_i.abs.to_s.rjust(10, "0")
-
-      # Title of Account
-      # Full BECS character set valid
-      output += account_name.to_s.ljust(32, " ")
-
-      # Lodgement Reference Produced on the recipient’s Account Statement.
-      # Full BECS character set valid
-      output += lodgement_reference.to_s.ljust(18, " ")
-
-      # Trace BSB Number
-      output += trace_bsb
-
-      # Trace Account Number
-      output += trace_account_number.to_s.rjust(9, " ")
-
-      # Name of Remitter Produced on the recipient’s Account Statement
-      # Full BECS character set valid
-      output += name_of_remitter.to_s.ljust(16, " ")
-
-      output += original_day_of_processing.to_s.rjust(2, " ")
-
-      output + original_user_id.to_s.rjust(6, " ")
+      format('2%-7s%9s%1d%2d%010d%-32s%-18s%-7s%9s%-16s%2d%6d',
+             bsb,
+             account_number,
+             return_code,
+             transaction_code,
+             amount.to_i.abs,
+             account_name,
+             lodgement_reference,
+             trace_bsb,
+             trace_account_number,
+             name_of_remitter,
+             original_day_of_processing,
+             original_user_id)
     end
   end
 end
