@@ -53,7 +53,7 @@ class Aba
 
     # Allow dashes to be input, but remove them from output
     def account_number
-      @account_number ? @account_number.to_s.gsub('-', '') : nil
+      @account_number ? @account_number.to_s.delete('-') : nil
     end
 
     # Fall back to 50
@@ -83,7 +83,7 @@ class Aba
 
     # Fall back to Account Number
     def trace_account_number
-      @trace_account_number ? @trace_account_number.to_s.gsub('-', '') : account_number
+      @trace_account_number ? @trace_account_number.to_s.delete('-') : account_number
     end
 
     def name_of_remitter
