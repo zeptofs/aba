@@ -19,7 +19,7 @@ aba = Aba.batch(
   process_at: Time.now.strftime("%d%m%y")
 )
 
-# Add transactions
+# Add transactions...
 10.times do
   aba.add_transaction(
     {
@@ -32,6 +32,26 @@ aba = Aba.batch(
       trace_bsb: "453-543",
       trace_account_number: "45656733",
       name_of_remitter: "Remitter"
+    }
+  )
+end
+
+# ...or add returns
+10.times do
+  aba.add_return(
+    {
+        bsb: '453-543',
+        account_number: '45656733',
+        amount: 10000,
+        account_name: 'John Doe',
+        transaction_code: 53,
+        lodgement_reference: 'R435564',
+        trace_bsb: '342-342',
+        trace_account_number: '3244654',
+        name_of_remitter: 'Remitter',
+        return_code: 8, 
+        original_user_id: 654321,
+        original_processing_day: 12,
     }
   )
 end

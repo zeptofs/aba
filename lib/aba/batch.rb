@@ -2,7 +2,7 @@ class Aba
   class Batch
     include Aba::Validations
 
-    attr_accessor :bsb, :financial_institution, :user_name, :user_id, :description, :process_at, :transactions
+    attr_accessor :bsb, :financial_institution, :user_name, :user_id, :description, :process_at, :entries
 
     # BSB
     validates_bsb         :bsb, allow_blank: true
@@ -34,8 +34,7 @@ class Aba
         send("#{key}=", value)
       end
 
-      @transaction_index = 0
-      @transactions = {}
+      @entries = []
 
       unless transactions.nil? || transactions.empty?
         transactions.to_a.each do |t|
@@ -47,56 +46,63 @@ class Aba
     end
 
     def to_s
-      raise RuntimeError, 'No transactions present - add one using `add_transaction`' if @transactions.empty?
+      raise RuntimeError, 'No entries present - add one using `add_transaction` or `add_return`' if entries.empty?
       raise RuntimeError, 'ABA data is invalid - check the contents of `errors`' unless valid?
 
       # Descriptive record
       output = "#{descriptive_record}\r\n"
 
       # Transactions records
-      output += @transactions.map{ |t| t[1].to_s }.join("\r\n")
+      output += entries.map { |t| t.to_s }.join("\r\n")
 
       # Batch control record
       output += "\r\n#{batch_control_record}"
     end
 
     def add_transaction(attrs = {})
-      if attrs.instance_of?(Aba::Transaction)
-        transaction = attrs
-      else
-        transaction = Aba::Transaction.new(attrs)
-      end
-      @transactions[@transaction_index] = transaction
-      @transaction_index += 1
-      transaction
+      add_entry(Aba::Transaction, attrs)
+    end
+
+    def add_return(attrs = {})
+      add_entry(Aba::Return, attrs)
+    end
+
+    def transactions
+      entries.select { |entry| entry.instance_of?(Aba::Transaction) }
     end
 
     def transactions_valid?
-      !has_transaction_errors?
+      !transactions.map { |t| t.valid? }.include?(false)
     end
 
     def valid?
-      !has_errors? && transactions_valid?
+      !has_errors? && !has_entry_errors?
     end
 
     def errors
       # Run validations
       has_errors?
-      has_transaction_errors?
+      has_entry_errors?
 
       # Build errors
       all_errors = {}
       all_errors[:aba] = self.error_collection unless self.error_collection.empty?
-      transaction_error_collection = @transactions.each_with_index.map{ |(k, t), i| [k, t.error_collection] }.reject{ |e| e[1].nil? || e[1].empty? }.to_h
-      all_errors[:transactions] = transaction_error_collection unless transaction_error_collection.empty?
+      entry_error_collection = entries.each_with_index.map { |t, i| [i, t.error_collection] }.reject { |e| e[1].nil? || e[1].empty? }.to_h
+      all_errors[:entries] = entry_error_collection unless entry_error_collection.empty?
 
       all_errors unless all_errors.empty?
     end
 
     private
 
-    def has_transaction_errors?
-      @transactions.map{ |t| t[1].valid? }.include?(false)
+    def add_entry(type, attrs)
+      (attrs.instance_of?(type) ? attrs : type.new(attrs)).tap do |entry|
+        entries << entry
+      end
+    end
+
+    def has_entry_errors?
+      entries.map { |t| t.valid? }.include?(false)
     end
 
     def descriptive_record
@@ -163,10 +169,10 @@ class Aba
       credit_total_amount = 0
       debit_total_amount  = 0
 
-      @transactions.each do |t|
-        net_total_amount += t[1].amount.to_i
-        credit_total_amount += t[1].amount.to_i if t[1].amount.to_i > 0
-        debit_total_amount += t[1].amount.to_i if t[1].amount.to_i < 0
+      entries.each do |t|
+        net_total_amount += t.amount.to_i
+        credit_total_amount += t.amount.to_i if t.amount.to_i > 0
+        debit_total_amount += t.amount.to_i if t.amount.to_i < 0
       end
 
       # Record type
@@ -207,7 +213,7 @@ class Aba
       # Total Item Count
       # Max: 6
       # Char position: 75-80
-      output += @transactions.size.to_s.rjust(6, "0")
+      output += entries.size.to_s.rjust(6, "0")
 
       # Reserved
       # Max: 40
