@@ -14,7 +14,7 @@ describe Aba::Return do
     :bsb => "123-234",
     :account_number => "4647642",
     :name_of_remitter => "Remitter",
-    :original_processing_day => "12",
+    :original_processing_day => "07",
     :original_user_id => "054321",
   } }
   subject(:transaction) { Aba::Return.new(transaction_params) }
@@ -22,7 +22,7 @@ describe Aba::Return do
   describe "#to_s" do
     it "should create a transaction row" do
       expect(subject.to_s).to include(
-        "2123-234  46476428530000050050John Doe                        R45343            345-453 23432342Remitter        12054321")
+        "2123-234  46476428530000050050John Doe                        R45343            345-453 23432342Remitter        07054321")
         # |      |        || |         |                               |                 |      |        |               | |
         # +-bsb  |        || +-amount  +-account_name                  |                 |      |        |               | +-original_user_id
         #        |        |+-transaction_code                          |                 |      |        |               +-original_processing_day

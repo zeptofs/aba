@@ -23,7 +23,7 @@ class Aba
     validates_integer           :amount
 
     # Original Day of Processing
-    validates_integer           :original_processing_day
+    validates_integer           :original_processing_day, :unsigned
 
     # Original User Id
     validates_max_length        :original_user_id, 6
@@ -94,7 +94,7 @@ class Aba
     def to_s
       raise 'Transaction data is invalid - check the contents of `errors`' unless valid?
 
-      format('2%-7s%9s%1d%2d%010d%-32s%-18s%-7s%9s%-16s%2d%6s',
+      format('2%-7s%9s%1d%2d%010d%-32s%-18s%-7s%9s%-16s%02d%6s',
              bsb,
              account_number,
              return_code,
@@ -105,7 +105,7 @@ class Aba
              trace_bsb,
              trace_account_number,
              name_of_remitter,
-             original_processing_day,
+             original_processing_day.to_i,
              original_user_id)
     end
   end
