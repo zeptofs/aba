@@ -77,4 +77,20 @@ describe Aba::Batch do
       end
     end
   end
+
+  describe "#errors" do
+
+    let(:errors) { subject.errors }
+
+    it "is empty" do
+      expect(errors).to be_nil
+    end
+
+    context "with an invalid amount" do
+      let(:transaction_amounts) { [1, 'abc', 'def'] }
+      it "reports the errors" do
+        expect(errors).to eq(:entries => { 1 => ["amount must be a number"], 2 => ["amount must be a number"] })
+      end
+    end
+  end
 end
