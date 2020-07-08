@@ -14,7 +14,7 @@ describe Aba::Return do
     :bsb => "123-234",
     :account_number => "4647642",
     :name_of_remitter => "Remitter",
-    :original_day_of_processing => "12",
+    :original_processing_day => "12",
     :original_user_id => "054321",
   } }
   subject(:transaction) { Aba::Return.new(transaction_params) }
@@ -25,7 +25,7 @@ describe Aba::Return do
         "2123-234  46476428530000050050John Doe                        R45343            345-453 23432342Remitter        12054321")
         # |      |        || |         |                               |                 |      |        |               | |
         # +-bsb  |        || +-amount  +-account_name                  |                 |      |        |               | +-original_user_id
-        #        |        |+-transaction_code                          |                 |      |        |               +-original_day_of_processing
+        #        |        |+-transaction_code                          |                 |      |        |               +-original_processing_day
         #        |        +-return_code                                |                 |      |        +-name_of_remitter
         #        +-account_number                                      |                 |      +-trace_account_number
         #                                                              |                 +-trace_bsb

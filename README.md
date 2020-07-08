@@ -51,7 +51,7 @@ end
         name_of_remitter: 'Remitter',
         return_code: 8, 
         original_user_id: 654321,
-        original_day_of_processing: 12,
+        original_processing_day: 12,
     }
   )
 end

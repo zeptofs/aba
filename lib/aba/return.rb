@@ -5,7 +5,7 @@ class Aba
     attr_accessor :account_number, :transaction_code, :amount, :account_name,
                   :bsb, :trace_bsb, :trace_account_number, :name_of_remitter,
                   :return_code, :lodgement_reference,
-                  :original_day_of_processing, :original_user_id
+                  :original_processing_day, :original_user_id
 
     # BSB
     validates_bsb               :bsb
@@ -23,7 +23,7 @@ class Aba
     validates_integer           :amount
 
     # Original Day of Processing
-    validates_integer           :original_day_of_processing
+    validates_integer           :original_processing_day
 
     # Original User Id
     validates_max_length        :original_user_id, 6
@@ -105,7 +105,7 @@ class Aba
              trace_bsb,
              trace_account_number,
              name_of_remitter,
-             original_day_of_processing,
+             original_processing_day,
              original_user_id)
     end
   end

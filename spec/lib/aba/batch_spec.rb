@@ -24,7 +24,7 @@ describe Aba::Batch do
                       lodgement_reference: 'R435564', trace_bsb: '342-342',
                       trace_account_number: '3244654', name_of_remitter: 'Remitter',
                       return_code: 8, original_user_id: 654321,
-                      original_day_of_processing: 12,
+                      original_processing_day: 12,
 
       )
     end
