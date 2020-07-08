@@ -27,6 +27,7 @@ class Aba
 
     # Original User Id
     validates_max_length        :original_user_id, 6
+    validates_integer           :original_user_id, :unsigned
 
     # Account Name
     validates_max_length        :account_name, 32
@@ -93,7 +94,7 @@ class Aba
     def to_s
       raise 'Transaction data is invalid - check the contents of `errors`' unless valid?
 
-      format('2%-7s%9s%1d%2d%010d%-32s%-18s%-7s%9s%-16s%2d%6d',
+      format('2%-7s%9s%1d%2d%010d%-32s%-18s%-7s%9s%-16s%2d%6s',
              bsb,
              account_number,
              return_code,
