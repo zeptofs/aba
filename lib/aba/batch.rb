@@ -76,12 +76,8 @@ class Aba
       !transactions.map { |t| t[1].valid? }.include?(false)
     end
 
-    def entries_valid?
-      !has_entry_errors?
-    end
-
     def valid?
-      !has_errors? && entries_valid?
+      !has_errors? && !has_entry_errors?
     end
 
     def errors
