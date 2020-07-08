@@ -46,6 +46,12 @@ class Aba
             else
               self.error_collection << "#{attribute} must be an unsigned number" unless value.to_s =~ /\A\d+\Z/
             end
+          when :matches_transaction_code
+            if debit? && value.to_i > 0
+              self.error_collection << "#{attribute} is positive but the transaction type is a debit"
+            elsif credit? && value.to_i < 0
+              self.error_collection << "#{attribute} is negative but the transaction type is a credit"
+            end
           when :account_number
             if value.to_s =~ /\A[0\ ]+\Z/ || value.to_s !~ /\A[a-z\d\ ]{1,9}\Z/
               self.error_collection << "#{attribute} must be a valid account number"
@@ -86,6 +92,11 @@ class Aba
 
       def validates_integer(attribute, signed = true)
         add_validation_attribute(attribute, :integer, signed)
+      end
+
+      def validates_amount(attribute)
+        add_validation_attribute(attribute, :integer, true)
+        add_validation_attribute(attribute, :matches_transaction_code)
       end
 
       def validates_account_number(attribute)
