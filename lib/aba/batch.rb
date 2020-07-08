@@ -34,8 +34,7 @@ class Aba
         send("#{key}=", value)
       end
 
-      @entries_index = 0
-      @entries = {}
+      @entries = []
 
       unless transactions.nil? || transactions.empty?
         transactions.to_a.each do |t|
@@ -54,7 +53,7 @@ class Aba
       output = "#{descriptive_record}\r\n"
 
       # Transactions records
-      output += entries.map { |t| t[1].to_s }.join("\r\n")
+      output += entries.map { |t| t.to_s }.join("\r\n")
 
       # Batch control record
       output += "\r\n#{batch_control_record}"
@@ -73,7 +72,7 @@ class Aba
     end
 
     def transactions_valid?
-      !transactions.map { |t| t[1].valid? }.include?(false)
+      !transactions.map { |t| t.valid? }.include?(false)
     end
 
     def valid?
@@ -98,13 +97,12 @@ class Aba
 
     def add_entry(type, attrs)
       (attrs.instance_of?(type) ? attrs : type.new(attrs)).tap do |entry|
-        entries[@entries_index] = entry
-        @entries_index += 1
+        entries << entry
       end
     end
 
     def has_entry_errors?
-      entries.map { |t| t[1].valid? }.include?(false)
+      entries.map { |t| t.valid? }.include?(false)
     end
 
     def descriptive_record
@@ -172,9 +170,9 @@ class Aba
       debit_total_amount  = 0
 
       entries.each do |t|
-        net_total_amount += t[1].amount.to_i
-        credit_total_amount += t[1].amount.to_i if t[1].amount.to_i > 0
-        debit_total_amount += t[1].amount.to_i if t[1].amount.to_i < 0
+        net_total_amount += t.amount.to_i
+        credit_total_amount += t.amount.to_i if t.amount.to_i > 0
+        debit_total_amount += t.amount.to_i if t.amount.to_i < 0
       end
 
       # Record type
