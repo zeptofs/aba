@@ -5,9 +5,9 @@ require "spec_helper"
 describe Aba::Batch do
   subject(:batch) { Aba::Batch.new(financial_institution: "WPC", user_name: "John Doe",
                       user_id: "466364", description: "Payroll", process_at: "190615") }
-  let(:transaction_values) { [30, -20] }
+  let(:transaction_amounts) { [30, -20] }
   let(:transactions) do
-    transaction_values.map do |amount|
+    transaction_amounts.map do |amount|
       Aba::Transaction.new(bsb: '342-342', account_number: '3244654', amount: amount,
       account_name: 'John Doe', transaction_code: 53,
       lodgement_reference: 'R435564', trace_bsb: '453-543',
@@ -16,9 +16,9 @@ describe Aba::Batch do
   end
   before { transactions.each { |trx| batch.add_transaction(trx) } }
 
-  let(:return_values) { [3, -2] }
+  let(:return_amounts) { [3, -2] }
   let(:returns) do
-    return_values.map do |amount|
+    return_amounts.map do |amount|
       Aba::Return.new(bsb: '453-543', account_number: '45656733', amount: amount,
                       account_name: 'John Doe', transaction_code: 53,
                       lodgement_reference: 'R435564', trace_bsb: '342-342',
@@ -69,8 +69,8 @@ describe Aba::Batch do
       end
 
       context 'with balanced transactions' do
-        let(:transaction_values) { [30, 30, -60] }
-        let(:return_values) { [3, 3, -6] }
+        let(:transaction_amounts) { [30, 30, -60] }
+        let(:return_amounts) { [3, 3, -6] }
         it "should return a string where the net total is zero" do
           expect(batch.to_s).to include("7999-999            000000000000000000660000000066                        000006                                        ")
         end
