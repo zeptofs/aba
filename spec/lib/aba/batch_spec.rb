@@ -52,7 +52,7 @@ describe Aba::Batch do
 
     context 'when detail record' do
 
-      it "should contain transactions records" do
+      it "should contain transaction & return records" do
         expect(batch.to_s).to include("1342-342  3244654 530000000030John Doe                        R435564           453-543 45656733Remitter        00000000\r\n")
         expect(batch.to_s).to include("1342-342  3244654 530000000020John Doe                        R435564           453-543 45656733Remitter        00000000\r\n")
         expect(batch.to_s).to include("2453-543 456567338530000000003John Doe                        R435564           342-342  3244654Remitter        12654321\r\n")
