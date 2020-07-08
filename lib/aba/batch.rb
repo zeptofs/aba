@@ -73,7 +73,7 @@ class Aba
     end
 
     def transactions_valid?
-      transactions.all? { |_key, entry| entry.valid? }
+      !transactions.map { |t| t[1].valid? }.include?(false)
     end
 
     def valid?
