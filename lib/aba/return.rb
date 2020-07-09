@@ -1,5 +1,5 @@
 class Aba
-  class Return < Entry
+  class Return
     include Aba::Validations
 
     attr_accessor :account_number, :transaction_code, :amount, :account_name,
@@ -20,7 +20,7 @@ class Aba
     validates_transaction_code  :transaction_code
 
     # Amount
-    validates_amount            :amount
+    validates_integer           :amount
 
     # Original Day of Processing
     validates_integer           :original_processing_day, :unsigned
@@ -45,6 +45,12 @@ class Aba
     validates_max_length        :name_of_remitter, 16
     validates_becs              :name_of_remitter
 
+
+    def initialize(attrs = {})
+      attrs.each do |key, value|
+        send("#{key}=", value)
+      end
+    end
 
     # Allow dashes to be input, but remove them from output
     def account_number

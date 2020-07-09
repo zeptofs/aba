@@ -1,6 +1,5 @@
 require "aba/version"
 require "aba/validations"
-require "aba/entry"
 require "aba/batch"
 require "aba/return"
 require "aba/transaction"
