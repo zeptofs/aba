@@ -7,11 +7,11 @@ class Aba
     end	
 
     def credit?
-      (50..57).include?(Integer(transaction_code))
+      (50..57).include?(transaction_code.to_i)
     end
 
     def debit?
-      Integer(transaction_code) == 13
+      transaction_code.to_i == 13
     end
   end	
 end

@@ -4,6 +4,7 @@ class Aba
 
     BECS_PATTERN = /\A[\w\+\-\@\ \$\!\%\&\(\)\*\.\/\#\=\:\;\?\,\'\[\]\_\^]*\Z/
     INDICATORS = [' ', 'N', 'T', 'W', 'X', 'Y']
+    VALID_TXN_CODES = [13, 50, 51, 52, 53, 54, 55, 56, 57]
 
     def self.included(base)
       base.instance_eval do
@@ -56,7 +57,7 @@ class Aba
             list = INDICATORS.join('\', \'')
             self.error_collection << "#{attribute} must be a one of '#{list}'" unless INDICATORS.include?(value.to_s)
           when :transaction_code
-            self.error_collection << "#{attribute} must be a 2 digit number" unless value.to_s =~ /\A\d{2,2}\Z/
+            self.error_collection << "#{attribute} must be one of #{VALID_TXN_CODES.join(', ')}" unless VALID_TXN_CODES.include?(value.to_i)
           end
         end
       end
