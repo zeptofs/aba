@@ -42,43 +42,14 @@ class Aba
       @account_number ? @account_number.to_s.gsub('-', '') : nil
     end
 
-    # Fall back to blank string
+    # Sane default for majority of use cases as per BECS
     def indicator
-      @indicator || Aba::Validations::INDICATORS.first
+      @indicator || ' '
     end
 
-    # Fall back to 50
-    def transaction_code
-      @transaction_code || 50
-    end
-
-    # Fall back to 0
-    def amount
-      @amount || 0
-    end
-
-    # Fall back to empty string
-    def account_name
-      @account_name || ''
-    end
-
-    # Fall back to empty string
+    # Optional as per BECS
     def lodgement_reference
       @lodgement_reference || ''
-    end
-
-    # Fall back to BSB
-    def trace_bsb
-      @trace_bsb || bsb
-    end
-
-    # Fall back to Account Number
-    def trace_account_number
-      @trace_account_number ? @trace_account_number.to_s.gsub('-', '') : account_number
-    end
-
-    def name_of_remitter
-      @name_of_remitter || ''
     end
 
     def to_s
