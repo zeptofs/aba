@@ -195,11 +195,11 @@ describe Aba::Validations do
 
       subject.transaction_code = "AA"
       expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["transaction_code must be one of #{described_class::VALID_TXN_CODES.join(', ')}"]
+      expect(subject.errors).to eq ["transaction_code must be one of #{described_class::transaction_codes.join(', ')}"]
 
       subject.transaction_code = "1"
       expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["transaction_code must be one of #{described_class::VALID_TXN_CODES.join(', ')}"]
+      expect(subject.errors).to eq ["transaction_code must be one of #{described_class::transaction_codes.join(', ')}"]
 
       subject.transaction_code = "13"
       expect(subject.valid?).to eq true

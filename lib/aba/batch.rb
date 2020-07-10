@@ -169,12 +169,10 @@ class Aba
       debit_total_amount  = 0
 
       entries.each do |entry|
-        if entry.credit?
-          credit_total_amount += Integer(entry.amount)
-        elsif entry.debit?
+        if entry.debit?
           debit_total_amount += Integer(entry.amount)
         else
-          next
+          credit_total_amount += Integer(entry.amount)
         end
       end
 

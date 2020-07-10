@@ -4,7 +4,8 @@ class Aba
 
     BECS_PATTERN = /\A[\w\+\-\@\ \$\!\%\&\(\)\*\.\/\#\=\:\;\?\,\'\[\]\_\^]*\Z/
     INDICATORS = [' ', 'N', 'T', 'W', 'X', 'Y']
-    VALID_TXN_CODES = [13, 50, 51, 52, 53, 54, 55, 56, 57]
+    DEBIT_TRANSACTION_CODES = [13]
+    CREDIT_TRANSACTION_CODES = [50, 51, 52, 53, 54, 55, 56, 57]
 
     def self.included(base)
       base.instance_eval do
@@ -12,6 +13,10 @@ class Aba
       end
 
       base.send :extend, ClassMethods
+    end
+
+    def self.transaction_codes
+      DEBIT_TRANSACTION_CODES + CREDIT_TRANSACTION_CODES
     end
 
     def valid?
@@ -57,7 +62,7 @@ class Aba
             list = INDICATORS.join('\', \'')
             self.error_collection << "#{attribute} must be a one of '#{list}'" unless INDICATORS.include?(value.to_s)
           when :transaction_code
-            self.error_collection << "#{attribute} must be one of #{VALID_TXN_CODES.join(', ')}" unless VALID_TXN_CODES.include?(value.to_i)
+            self.error_collection << "#{attribute} must be one of #{Validations.transaction_codes.join(', ')}" unless Validations.transaction_codes.include?(value.to_i)
           end
         end
       end
