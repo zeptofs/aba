@@ -2,6 +2,7 @@ require 'bundler/setup'
 Bundler.setup
 
 require "aba"
+require "pry"
 
 RSpec.configure do |config|
   config.order = :random

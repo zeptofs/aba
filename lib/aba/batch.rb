@@ -165,14 +165,17 @@ class Aba
     end
 
     def batch_control_record
-      net_total_amount    = 0
       credit_total_amount = 0
       debit_total_amount  = 0
 
-      entries.each do |t|
-        net_total_amount += t.amount.to_i
-        credit_total_amount += t.amount.to_i if t.amount.to_i > 0
-        debit_total_amount += t.amount.to_i if t.amount.to_i < 0
+      entries.each do |entry|
+        if entry.credit?
+          credit_total_amount += Integer(entry.amount)
+        elsif entry.debit?
+          debit_total_amount += Integer(entry.amount)
+        else
+          next
+        end
       end
 
       # Record type
@@ -193,7 +196,7 @@ class Aba
       # Net total
       # Max: 10
       # Char position: 21-30
-      output += net_total_amount.abs.to_s.rjust(10, "0")
+      output += (credit_total_amount - debit_total_amount).abs.to_s.rjust(10, "0")
 
       # Credit Total Amount
       # Max: 10
