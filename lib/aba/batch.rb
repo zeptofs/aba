@@ -170,9 +170,9 @@ class Aba
 
       entries.each do |entry|
         if entry.debit?
-          debit_total_amount += Integer(entry.amount)
+          debit_total_amount += Integer(entry.amount).abs
         else
-          credit_total_amount += Integer(entry.amount)
+          credit_total_amount += Integer(entry.amount).abs
         end
       end
 

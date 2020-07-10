@@ -101,6 +101,17 @@ describe Aba::Batch do
           #                                                  | Total  || Credit || Debit  |
         end
       end
+
+      context 'with negative values supplied for the amounts' do
+        let(:transactions_attributes) { [{amount: -30, transaction_code: 50}, {amount: -20, transaction_code: 13}] }
+        let(:returns_attributes) { [{amount: -3, transaction_code: 50}, {amount: 2, transaction_code: 13}] }
+
+        it 'should return a string where the amount segments rely on the transaction code, not the amount sign' do
+          expect(batch.to_s).to include("7999-999            000000001100000000330000000022                        000004                                        ")
+          #                                                  | Total  || Credit || Debit  |
+        end
+
+      end
     end
   end
 
