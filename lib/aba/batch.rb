@@ -199,12 +199,12 @@ class Aba
       # Credit Total Amount
       # Max: 10
       # Char position: 31-40
-      output += credit_total_amount.abs.to_s.rjust(10, "0")
+      output += credit_total_amount.to_s.rjust(10, "0")
 
       # Debit Total Amount
       # Max: 10
       # Char position: 41-50
-      output += debit_total_amount.abs.to_s.rjust(10, "0")
+      output += debit_total_amount.to_s.rjust(10, "0")
 
       # Reserved
       # Max: 24

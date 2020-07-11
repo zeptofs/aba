@@ -13,5 +13,5 @@ class Aba
     def debit?
       Validations::DEBIT_TRANSACTION_CODES.include?(transaction_code.to_i)
     end
-  end	
+  end
 end
