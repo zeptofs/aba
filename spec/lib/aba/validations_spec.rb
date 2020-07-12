@@ -180,35 +180,31 @@ describe Aba::Validations do
 
       subject.attr1 = "$"
       expect(subject.valid?).to eq false
-      list = Aba::Validations::INDICATORS.join('\', \'')
+      list = described_class::INDICATORS.join('\', \'')
       expect(subject.errors).to eq ["attr1 must be a one of '#{list}'"]
 
-      subject.attr1 = Aba::Validations::INDICATORS.sample
+      subject.attr1 = described_class::INDICATORS.sample
       expect(subject.valid?).to eq true
     end
 
     it "should validate transaction code" do
       clean_room.instance_eval do
-        attr_accessor :attr1
-        validates_transaction_code :attr1
+        attr_accessor :transaction_code
+        validates_transaction_code :transaction_code
       end
 
-      subject.attr1 = "AA"
+      subject.transaction_code = "AA"
       expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["attr1 must be a 2 digit number"]
+      expect(subject.errors).to eq ["transaction_code must be one of #{described_class::transaction_codes.join(', ')}"]
 
-      subject.attr1 = "123"
+      subject.transaction_code = "1"
       expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["attr1 must be a 2 digit number"]
+      expect(subject.errors).to eq ["transaction_code must be one of #{described_class::transaction_codes.join(', ')}"]
 
-      subject.attr1 = "1"
-      expect(subject.valid?).to eq false
-      expect(subject.errors).to eq ["attr1 must be a 2 digit number"]
-
-      subject.attr1 = "15"
+      subject.transaction_code = "13"
       expect(subject.valid?).to eq true
 
-      subject.attr1 = 15
+      subject.transaction_code = 50
       expect(subject.valid?).to eq true
     end
   end

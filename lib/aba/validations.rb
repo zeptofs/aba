@@ -4,6 +4,8 @@ class Aba
 
     BECS_PATTERN = /\A[\w\+\-\@\ \$\!\%\&\(\)\*\.\/\#\=\:\;\?\,\'\[\]\_\^]*\Z/
     INDICATORS = [' ', 'N', 'T', 'W', 'X', 'Y']
+    DEBIT_TRANSACTION_CODES = [13]
+    CREDIT_TRANSACTION_CODES = [50, 51, 52, 53, 54, 55, 56, 57]
 
     def self.included(base)
       base.instance_eval do
@@ -11,6 +13,10 @@ class Aba
       end
 
       base.send :extend, ClassMethods
+    end
+
+    def self.transaction_codes
+      DEBIT_TRANSACTION_CODES + CREDIT_TRANSACTION_CODES
     end
 
     def valid?
@@ -46,12 +52,6 @@ class Aba
             else
               self.error_collection << "#{attribute} must be an unsigned number" unless value.to_s =~ /\A\d+\Z/
             end
-          when :matches_transaction_code
-            if debit? && value.to_i > 0
-              self.error_collection << "#{attribute} is positive but the transaction type is a debit"
-            elsif credit? && value.to_i < 0
-              self.error_collection << "#{attribute} is negative but the transaction type is a credit"
-            end
           when :account_number
             if value.to_s =~ /\A[0\ ]+\Z/ || value.to_s !~ /\A[a-z\d\ ]{1,9}\Z/
               self.error_collection << "#{attribute} must be a valid account number"
@@ -62,7 +62,7 @@ class Aba
             list = INDICATORS.join('\', \'')
             self.error_collection << "#{attribute} must be a one of '#{list}'" unless INDICATORS.include?(value.to_s)
           when :transaction_code
-            self.error_collection << "#{attribute} must be a 2 digit number" unless value.to_s =~ /\A\d{2,2}\Z/
+            self.error_collection << "#{attribute} must be one of #{Validations.transaction_codes.join(', ')}" unless Validations.transaction_codes.include?(value.to_i)
           end
         end
       end
@@ -92,11 +92,6 @@ class Aba
 
       def validates_integer(attribute, signed = true)
         add_validation_attribute(attribute, :integer, signed)
-      end
-
-      def validates_amount(attribute)
-        add_validation_attribute(attribute, :integer, true)
-        add_validation_attribute(attribute, :matches_transaction_code)
       end
 
       def validates_account_number(attribute)

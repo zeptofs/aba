@@ -7,11 +7,11 @@ class Aba
     end
 
     def credit?
-      (50..57).include?(transaction_code.to_i)
+      Validations::CREDIT_TRANSACTION_CODES.include?(transaction_code.to_i)
     end
 
     def debit?
-      transaction_code.to_i == 13
+      Validations::DEBIT_TRANSACTION_CODES.include?(transaction_code.to_i)
     end
   end
 end

@@ -65,27 +65,28 @@ There are a few ways to create a complete set of ABA data:
 ```ruby
 # Transactions added to the defined ABA object variable
 aba = Aba.batch financial_institution: 'ANZ', user_name: 'Joe Blow', user_id: 123456, process_at: 200615
-aba.add_transaction bsb: '123-456', account_number: '000-123-456', amount: 50000
-aba.add_transaction bsb: '456-789', account_number: '123-456-789', amount: '-10000', transaction_code: 13
+aba.add_transaction bsb: '123-456', account_number: '000-123-456', amount: 50000, transaction_code: 50
+aba.add_transaction bsb: '456-789', account_number: '123-456-789', amount: 10000, transaction_code: 13
 
 # Transactions passed individually inside a block
 aba = Aba.batch financial_institution: 'ANZ', user_name: 'Joe Blow', user_id: 123456, process_at: 200615 do |a|
-  a.add_transaction bsb: '123-456', account_number: '000-123-456', amount: 50000
-  a.add_transaction bsb: '456-789', account_number: '123-456-789', amount: '-10000', transaction_code: 13
+  a.add_transaction bsb: '123-456', account_number: '000-123-456', amount: 50000, transaction_code: 50
+  a.add_transaction bsb: '456-789', account_number: '123-456-789', amount: 10000, transaction_code: 13
 end
 
 # Transactions as an array passed to the second param of Aba.batch
 aba = Aba.batch(
   { financial_institution: 'ANZ', user_name: 'Joe Blow', user_id: 123456, process_at: 200615 },
   [
-    { bsb: '123-456', account_number: '000-123-456', amount: 50000 },
-    { bsb: '456-789', account_number: '123-456-789', amount: '-10000', transaction_code: 13 }
+    { bsb: '123-456', account_number: '000-123-456', amount: 50000, transaction_code: 50 },
+    { bsb: '456-789', account_number: '123-456-789', amount: 10000, transaction_code: 13 }
   ]
 )
-
-# NOTE: Be careful with negative transaction amounts! transaction_code will not
-#       be set to debit automatically!
 ```
+
+> **Note:** Positive (`n`) and negative (`-n`) values are now treated the same.
+> e.g `5` and `-5` are both processed as `5`, without any signage.
+> To differentiate between a debit and credit, use the correct [Transaction Code](https://github.com/andrba/aba/blob/58446f5b0ef822e9792e9399b4af647319b13515/lib/aba/transaction.rb#L106-L112)
 
 Validation errors can be caught in several ways:
 

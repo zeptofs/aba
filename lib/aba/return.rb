@@ -20,7 +20,7 @@ class Aba
     validates_transaction_code  :transaction_code
 
     # Amount
-    validates_amount            :amount
+    validates_integer           :amount
 
     # Original Day of Processing
     validates_integer           :original_processing_day, :unsigned
@@ -44,7 +44,6 @@ class Aba
     # Name of Remitter
     validates_max_length        :name_of_remitter, 16
     validates_becs              :name_of_remitter
-
 
     # Allow dashes to be input, but remove them from output
     def account_number
