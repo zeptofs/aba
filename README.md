@@ -84,7 +84,9 @@ aba = Aba.batch(
 )
 ```
 
-**NOTE:** Amounts are always positive. Use the appropriate transaction code to define a debit or credit.
+> **Note:** Positive (`n`) and negative (`-n`) values are now treated the same.
+> e.g `5` and `-5` are both processed as `5`, without any signage.
+> To differentiate between a debit and credit, use the correct [Transaction Code](https://github.com/andrba/aba/blob/58446f5b0ef822e9792e9399b4af647319b13515/lib/aba/transaction.rb#L106-L112)
 
 Validation errors can be caught in several ways:
 
