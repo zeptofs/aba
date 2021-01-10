@@ -1,3 +1,9 @@
+## V1.0.1, 11 January 2021
+
+### BUG FIX
+
+Account numbers/alphas validation should be case insensitive
+
 ## v1.0.0, 12 July 2020
 
 ### BREAKING CHANGES
