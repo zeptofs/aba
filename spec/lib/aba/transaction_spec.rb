@@ -54,5 +54,21 @@ describe Aba::Transaction do
         expect(subject.errors).to eq ["bsb format is incorrect"]
       end
     end
+
+    describe ":amount" do
+      subject(:transaction) { Aba::Transaction.new(transaction_params.merge(amount: amount)) }
+
+      context "with 10 digits" do
+        let(:amount) { "1234567890" }
+
+        it { is_expected.to be_valid }
+      end
+
+      context "with 11 digits" do
+        let(:amount) { "12345678901" }
+
+        it { is_expected.not_to be_valid }
+      end
+    end
   end
 end

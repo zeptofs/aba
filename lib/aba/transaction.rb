@@ -22,6 +22,7 @@ class Aba
 
     # Amount
     validates_integer           :amount
+    validates_max_length        :amount, 10
 
     # Account Name
     validates_max_length        :account_name, 32
