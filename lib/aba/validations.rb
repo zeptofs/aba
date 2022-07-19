@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aba
   module Validations
     attr_accessor :error_collection

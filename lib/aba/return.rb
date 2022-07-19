@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aba
   class Return < Entry
     include Aba::Validations

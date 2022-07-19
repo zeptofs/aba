@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aba
   class Transaction < Entry
     include Aba::Validations
