@@ -1,3 +1,12 @@
+# Changelog
+
+## v1.0.1, 19 July 2022
+
+### Added
+
+- Enforce ABA validation: amount (in cents) cannot exceed 10 characters.
+- Enforce ABA validation: total amount (in cents) cannot exceed 10 characters.
+
 ## v1.0.0, 12 July 2020
 
 ### BREAKING CHANGES
