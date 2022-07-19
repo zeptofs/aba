@@ -30,6 +30,8 @@ class Aba
     validates_length      :process_at, 6
     validates_integer     :process_at, false
 
+    # Total
+    validates_max_length  :total, 10
 
     def initialize(attrs = {}, transactions = [])
       attrs.each do |key, value|
@@ -67,6 +69,10 @@ class Aba
 
     def add_return(attrs = {})
       add_entry(Aba::Return, attrs)
+    end
+
+    def total
+      transactions.sum { |t| t.amount.to_i }
     end
 
     def transactions

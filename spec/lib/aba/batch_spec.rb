@@ -131,5 +131,18 @@ describe Aba::Batch do
         expect(batch.errors).to eq(:entries => { 1 => ["amount must be a number"], 2 => ["amount must be a number"] })
       end
     end
+
+    context "with an invalid total (exceeding 10 characters)" do
+      let(:transactions_attributes) do
+        [
+          {amount: 9999999999, transaction_code: 50},
+          {amount: 9999999999, transaction_code: 50},
+        ]
+      end
+
+      it "reports the errors" do
+        expect(batch.errors).to include(aba: ["total length must not exceed 10 characters"])
+      end
+    end
   end
 end
