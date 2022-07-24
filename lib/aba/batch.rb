@@ -30,6 +30,9 @@ class Aba
     validates_length      :process_at, 6
     validates_integer     :process_at, false
 
+    # Totals
+    validates_max_length  :debit_total_amount, 10
+    validates_max_length  :credit_total_amount, 10
 
     def initialize(attrs = {}, transactions = [])
       attrs.each do |key, value|
@@ -167,17 +170,6 @@ class Aba
     end
 
     def batch_control_record
-      credit_total_amount = 0
-      debit_total_amount  = 0
-
-      entries.each do |entry|
-        if entry.debit?
-          debit_total_amount += Integer(entry.amount).abs
-        else
-          credit_total_amount += Integer(entry.amount).abs
-        end
-      end
-
       # Record type
       # Max: 1
       # Char position: 1
@@ -222,6 +214,18 @@ class Aba
       # Max: 40
       # Char position: 81-120
       output += " " * 40
+    end
+
+    def credit_total_amount
+      entries.reject(&:debit?).sum(&method(:entry_amount))
+    end
+
+    def debit_total_amount
+      entries.select(&:debit?).sum(&method(:entry_amount))
+    end
+
+    def entry_amount(entry)
+      entry.amount.to_s[/\A\-?\d+\z/] ? Integer(entry.amount).abs : 0
     end
   end
 end
