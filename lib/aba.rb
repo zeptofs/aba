@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "aba/version"
 require "aba/validations"
 require "aba/entry"

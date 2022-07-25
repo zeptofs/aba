@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # encoding: UTF-8
 
 require "spec_helper"
@@ -127,6 +129,32 @@ describe Aba::Batch do
 
       it "reports the errors" do
         expect(batch.errors).to eq(:entries => { 1 => ["amount must be a number"], 2 => ["amount must be a number"] })
+      end
+    end
+
+    context "with an invalid credit total (exceeding 10 characters)" do
+      let(:transactions_attributes) do
+        [
+          {amount: 9999999999, transaction_code: 50},
+          {amount: 9999999999, transaction_code: 50},
+        ]
+      end
+
+      it "reports the errors" do
+        expect(batch.errors).to include(aba: ["credit_total_amount length must not exceed 10 characters"])
+      end
+    end
+
+    context "with an invalid debit total amount (exceeding 10 characters)" do
+      let(:transactions_attributes) do
+        [
+          {amount: 9999999999, transaction_code: 13},
+          {amount: 9999999999, transaction_code: 13},
+        ]
+      end
+
+      it "reports the errors" do
+        expect(batch.errors).to include(aba: ["debit_total_amount length must not exceed 10 characters"])
       end
     end
   end

@@ -1,4 +1,15 @@
-## V1.0.1, 11 January 2021
+# Changelog
+
+## v1.0.2, 25 July 2022
+
+### Added
+
+- Enforce ABA validation:
+  - Amount (in cents) cannot exceed 10 characters.
+  - Total debit amount (in cents) cannot exceed 10 characters.
+  - Total credit amount (in cents) cannot exceed 10 characters.
+
+## v1.0.1, 11 January 2021
 
 ### BUG FIX
 
@@ -8,13 +19,15 @@ Account numbers/alphas validation should be case insensitive
 
 ### BREAKING CHANGES
 
-* Positive (`n`) and negative (`-n`) values are now treated the same.
-  e.g `5` and `-5` are both processed as `5`, without any signage.
-  To differentiate between a debit and credit, use the correct [Transaction Code](https://github.com/andrba/aba/blob/58446f5b0ef822e9792e9399b4af647319b13515/lib/aba/transaction.rb#L106-L112)
-* Removed default values for transactions records to avoid generation of potentially incorrect records. Safety first!
-* Minimum Ruby version is now 2.5
+- Positive (`n`) and negative (`-n`) values are now treated the same. e.g `5`
+  and `-5` are both processed as `5`, without any signage. To differentiate
+  between a debit and credit, use the correct [Transaction
+  Code](https://github.com/andrba/aba/blob/58446f5b0ef822e9792e9399b4af647319b13515/lib/aba/transaction.rb#L106-L112)
+- Removed default values for transactions records to avoid generation of
+  potentially incorrect records. Safety first!
+- Minimum Ruby version is now 2.5
 
 ### NEW FEATURE
 
-* You can now add a *return* record to be used when you'd like to return
-a credit or a debit to another financial institution (OFI).
+- You can now add a *return* record to be used when you'd like to return a
+  credit or a debit to another financial institution (OFI).

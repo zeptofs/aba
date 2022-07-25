@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Aba
   class Entry
     def initialize(attrs = {})
