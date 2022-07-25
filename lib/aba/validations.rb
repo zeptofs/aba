@@ -55,7 +55,7 @@ class Aba
               self.error_collection << "#{attribute} must be an unsigned number" unless value.to_s =~ /\A\d+\Z/
             end
           when :account_number
-            if value.to_s =~ /\A[0\ ]+\Z/ || value.to_s !~ /\A[a-z\d\ ]{1,9}\Z/
+            if value.to_s =~ /\A[0\ ]+\Z/ || value.to_s !~ /\A[a-z\d\ ]{1,9}\Z/i
               self.error_collection << "#{attribute} must be a valid account number"
             end
           when :becs
