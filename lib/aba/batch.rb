@@ -173,6 +173,9 @@ class Aba
     end
 
     def batch_control_record
+      cached_credit_total_amount = credit_total_amount
+      cached_debit_total_amount = debit_total_amount
+
       # Record type
       # Max: 1
       # Char position: 1
@@ -191,17 +194,17 @@ class Aba
       # Net total
       # Max: 10
       # Char position: 21-30
-      output += (credit_total_amount - debit_total_amount).abs.to_s.rjust(10, "0")
+      output += (cached_credit_total_amount - cached_debit_total_amount).abs.to_s.rjust(10, "0")
 
       # Credit Total Amount
       # Max: 10
       # Char position: 31-40
-      output += credit_total_amount.to_s.rjust(10, "0")
+      output += cached_credit_total_amount.to_s.rjust(10, "0")
 
       # Debit Total Amount
       # Max: 10
       # Char position: 41-50
-      output += debit_total_amount.to_s.rjust(10, "0")
+      output += cached_debit_total_amount.to_s.rjust(10, "0")
 
       # Reserved
       # Max: 24
@@ -220,7 +223,7 @@ class Aba
     end
 
     def credit_total_amount
-      entries.reject(&:debit?).sum(&method(:entry_amount))
+      credit_total_amount ||= entries.reject(&:debit?).sum(&method(:entry_amount))
     end
 
     def debit_total_amount
