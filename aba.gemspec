@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["andrey.bazhutkin@gmail.com", "trev@a07.com.au"]
   spec.summary       = "ABA File Generator"
   spec.description   = "ABA (Australian Bankers Association) File Generator"
-  spec.homepage      = "https://github.com/andrba/aba"
+  spec.homepage      = "https://github.com/zeptofs/aba"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
